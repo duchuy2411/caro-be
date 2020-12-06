@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose")
 
-mongoose.connect('mongodb+srv://dbUser:Huykhung123.@cluster0.jtp3p.mongodb.net/<dbname>?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://dbcaro:Huykhung123.@cluster0.jtp3p.mongodb.net/caroDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+
 var db = mongoose.connection;
 //Bắt sự kiện error
 db.on('error', function(err) {
@@ -10,3 +11,5 @@ db.on('error', function(err) {
 db.once('open', function() {
     console.log("Kết nối thành công !");
 });
+
+module.exports.db;

@@ -11,21 +11,10 @@ const morgan = require('morgan')
 //router
 const user = require("./router/user/index.js");
 const admin = require("./router/admin/index.js")
-const mongoose = require('mongoose');
+require('./models/mongoose.js');
 const dotenv = require("dotenv").config()
 
 const port = 8000
-
-mongoose.connect('mongodb+srv://dbcaro:Huykhung123.@cluster0.jtp3p.mongodb.net/caroDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
-var db = mongoose.connection;
-//Bắt sự kiện error
-db.on('error', function(err) {
-    if (err) console.log(err)
-});
-//Bắt sự kiện open
-db.once('open', function() {
-    console.log("Kết nối thành công !");
-});
 
 app.use(cors())
 app.use(express.json());
@@ -39,12 +28,18 @@ app.get("/", (req,res) => {
     })
 })
 
-app.use(function(err, req, res, next) {
-    console.log(err);
+app.use((req,res,next) => {
+    const err = "Page not found";
+    err.status = 404;
+    next(err);
+});
 
-    res.status(500).json({
+app.use(function(err, req, res, next) {
+    const error = app.get('env') === 'development' ? err : {};
+    const status = err.status || 500;
+    return res.status(status).json({
         error: 1,
-        message: "Server error!!"
+        message: error.message
     })
 })
 
