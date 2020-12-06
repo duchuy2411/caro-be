@@ -12,8 +12,11 @@ const morgan = require('morgan')
 const user = require("./router/user/index.js");
 const admin = require("./router/admin/index.js")
 const mongoose = require('mongoose');
+const dotenv = require("dotenv").config()
 
-mongoose.connect('mongodb+srv://dbcaro:Huykhung123.@cluster0.jtp3p.mongodb.net/caroDB?retryWrites=true&w=majority', { useNewUrlParser: true });
+const port = 8000
+
+mongoose.connect('mongodb+srv://dbcaro:Huykhung123.@cluster0.jtp3p.mongodb.net/caroDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 //Bắt sự kiện error
 db.on('error', function(err) {
@@ -58,7 +61,7 @@ app.use(function(err, req, res, next) {
 // })
 
 
-http.listen(8000, () => {
+http.listen(process.env.PORT ? process.env.PORT : port, () => {
     console.log("Server on!");
 })
 
