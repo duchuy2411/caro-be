@@ -43,19 +43,6 @@ app.use(function(err, req, res, next) {
     })
 })
 
-// io.on('connection', (socket) => {
-//     console.log("A user connection: ",socket.id);
-
-//     socket.on('disconnect', () => {
-//         console.log(socket.id, " disconnected!!");
-//     })
-
-//     socket.on('hello-server', (data) => {
-//         console.log("Huy đang nghe: ", data);
-//     })
-// })
-
-
 http.listen(process.env.PORT ? process.env.PORT : port, () => {
     console.log("Server on!");
 })
