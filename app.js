@@ -11,6 +11,7 @@ const morgan = require('morgan')
 //router
 const user = require("./router/user/index.js");
 const admin = require("./router/admin/index.js")
+
 require('./models/mongoose.js');
 const dotenv = require("dotenv").config()
 
@@ -42,19 +43,6 @@ app.use(function(err, req, res, next) {
         message: error.message
     })
 })
-
-// io.on('connection', (socket) => {
-//     console.log("A user connection: ",socket.id);
-
-//     socket.on('disconnect', () => {
-//         console.log(socket.id, " disconnected!!");
-//     })
-
-//     socket.on('hello-server', (data) => {
-//         console.log("Huy đang nghe: ", data);
-//     })
-// })
-
 
 http.listen(process.env.PORT ? process.env.PORT : port, () => {
     console.log("Server on!");

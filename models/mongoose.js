@@ -9,7 +9,7 @@ db.on('error', function(err) {
 });
 //Bắt sự kiện open
 db.once('open', function() {
-    console.log("Kết nối thành công !");
+    console.log("Kết nối db thành công !");
 });
 
 module.exports.db;

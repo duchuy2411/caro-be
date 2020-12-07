@@ -1,46 +1,53 @@
+const passport = require("passport");
+const JwtStrategy = require("passport-jwt").Strategy;
+const LocalStrategy = require("passport-local").Strategy;
 
-const passport = require('passport')
-const JwtStrategy = require('passport-jwt').Strategy
-const LocalStrategy = require('passport-local').Strategy
-const { ExtractJwt } = require('passport-jwt')
+const { ExtractJwt } = require("passport-jwt");
+const JWT_SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : "webnangcao";
 
-const User = require('../models/user')
+const User = require("../models/user");
 
-passport.use(new JwtStrategy({
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken('Authorization'),
-    secretOrKey: process.env.JWT_SECRET
-}, async (payload, done) => {
+// Passport Jwt
+passport.use(
+new JwtStrategy(
+    {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken("Authorization"),
+    secretOrKey: JWT_SECRET,
+    },
+    async (payload, done) => {
     try {
         const user = await User.findById(payload.sub);
 
-        if (!user) return done(null, false)
+        if (!user) return done(null, false);
 
-        done(null, user)
+        done(null, user);
     } catch (error) {
-        done(error, false)
+        done(error, false);
     }
-}))
-
+    }
+)
+);
 // Passport local
-passport.use(new LocalStrategy({
-    usernameField: 'username'
-}, async (username, password, done) => {
+passport.use(
+new LocalStrategy(
+    {
+    usernameField: "username",
+    },
+    async (username, password, done) => {
     try {
-        //console.log(username, password);
-        const user = await User.findUser(username);
+        
+        const user = await User.findOne({ username });
+    
+        if (!user) return done(null, false);
 
-        if (!user) return done(null, false)
+        const isCorrectPassword = await user.isValidPassword(password);
 
-        // const isCorrectPassword = await User.verifyPassword(password, user.password)
+        if (!isCorrectPassword) return done(null, false);
 
-        if (!isCorrectPassword)  {
-            console.log("Sai");
-            return done(null, false);
-        }
-
-        return done(null, user)
+        done(null, user);
     } catch (error) {
-        console.log(error);
-        return done(error, false)
+        done(error, false);
     }
-}))
+    }
+)
+);
