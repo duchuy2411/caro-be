@@ -37,6 +37,7 @@ const login = async (req, res) => {
 }
 
 const signup = async (req, res, next) => {
+    
     let {displayname, username, password, email} = req.body;
 
     let user = new User({
