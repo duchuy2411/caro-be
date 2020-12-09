@@ -17,11 +17,19 @@ const dotenv = require("dotenv").config()
 
 const port = 8000
 
+const range = function (req, res, next) {
+    res.header('Access-Control-Expose-Headers', 'X-Total-Count')
+    res.header('X-Total-Count','10');
+    next();
+}
+app.use(range);
+
 app.use(cors())
 app.use(express.json());
 app.use(morgan("dev"));
 
-app.use("/api/user", user);
+app.use("/admin", admin)
+app.use("/api/users", user);
 
 app.get("/", (req,res) => {
     res.status(200).json({
