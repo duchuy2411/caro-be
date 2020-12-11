@@ -4,6 +4,7 @@ var app = express();
 
 const http = require('http').createServer(app);
 const io = require('./socketio/index').listen(http);
+const bodyParser = require("body-parser");
 
 const cors = require('cors')
 
@@ -27,6 +28,9 @@ app.use(range);
 app.use(cors())
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 app.use("/admin", admin)
 app.use("/api/users", user);

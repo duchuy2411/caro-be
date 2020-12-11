@@ -35,7 +35,6 @@ passport.use(
     },
     async (username, password, done) => {
       try {
-         
         const user = await User.findOne({ username });
        
         if (!user) return done(null, false);
@@ -51,3 +50,23 @@ passport.use(
     }
   )
 );
+
+// passport.use('local.signin', new LocalStrategy({
+//       passReqToCallback: true
+//     }, function (req, username, password, done) {
+//       try {
+//         const user = User.findOne({ username });
+//         console.log(username);
+//         if (!user) return done(null, false);
+        
+//         const isCorrectPassword = User.isValidPassword(password);
+
+//         if (!isCorrectPassword) return done(null, false);
+
+//         done(null, user);
+//       } catch (error) {
+//         done(error, false);
+//       }
+//     }
+//   )
+// );

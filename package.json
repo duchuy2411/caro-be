@@ -18,11 +18,12 @@
     "express": "^4.17.1",
     "mongoose": "^5.11.4",
     "morgan": "^1.10.0",
+    "node-sessionstorage": "^1.0.0",
     "nodemon": "^2.0.6",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "socket.io": "^3.0.3",
-    "socket.io-client": "^3.0.3"
+    "socket.io-client": "^3.0.4"
   }
 }

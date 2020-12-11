@@ -3,6 +3,7 @@ const Online = require('../../models/online');
 
 const JWT = require("jsonwebtoken");
 const { Model } = require('mongoose');
+const sessionStorage = require('node-sessionstorage');
 
 const encodedToken = (id) => {
     return JWT.sign({
@@ -26,14 +27,31 @@ const login = async (req, res) => {
     const token = encodedToken(req.user._id);
 
     const user = await User.findById(req.user._id);
+    
+    if (user) {
+        res.setHeader('Authorization', token);
 
-    res.setHeader('Authorization', token);
+        //xóa tk khách trong ds online sau khi đăng nhập
+        // Online.findOneAndDelete({iduser: JSON.parse(sessionStorage.getItem('currentuser'))._id}, function(err, docs) {
+        //     if(err) console.log(err) 
+        //     else return;
+        // });
+        
+        //thêm tài khoản đã đăng nhập
+        sessionStorage.setItem('currentuser', JSON.stringify(user));
+        const newOnline = new Online({iduser: user._id, displayname: user.displayname});
+        await newOnline.save();
 
-    return res.status(201).json({
-        error: 0,
-        message: 'Login  success!',
-        data: {user: user}
-    })
+        return res.redirect('http://localhost:3000/play');
+        // return res.redirect('http://localhost:3000/play').json({
+        //     error: 0,
+        //     message: 'Login  success!',
+        //     data: {user: user}
+        // });
+    }
+    else {
+        return res.redirect('http://localhost:3000/sign-in');
+    }
 }
 
 const signup = async (req, res, next) => {
@@ -52,13 +70,15 @@ const signup = async (req, res, next) => {
     let usernew = await User.findOne({username: username});
     console.log(usernew);
 
-    return res.status(200).json({
-        error: 0,
-        message: 'Create success',
-        data: {
-            user: usernew
-        }
-    })
+    return res.redirect('http://localhost:3000/sign-in');
+
+    // return res.status(200).json({
+    //     error: 0,
+    //     message: 'Create success',
+    //     data: {
+    //         user: usernew
+    //     }
+    // })
 }
 
 const testau = async (req, res, next) => {
@@ -67,9 +87,46 @@ const testau = async (req, res, next) => {
     })
 }
 
+const getCurrentUser = async (req, res, next) => {
+    let currentUserString = sessionStorage.getItem('currentuser');
+    if (currentUserString) {
+        const currentUserObject = JSON.parse(currentUserString);
+        return res.json({
+            error: 0,
+            message: 'Get current user success! ',
+            data: {user: currentUserObject}
+        });
+    }
+    else {
+        return res.json({
+            error: 0,
+            message: 'Not exist current user',
+            data: {user: null}
+        });
+    }
+}
+
+const logout = async (req, res) => {
+    const user = JSON.parse(sessionStorage.getItem('currentuser'));
+    Online.findOneAndDelete({iduser: user._id}, function(err, docs) {
+        if(err) console.log(err) 
+        else return;
+    });
+    sessionStorage.setItem('currentuser', '');
+
+    const onlineUserList = await Online.find({});
+    return res.json({
+        error: 0,
+        message: 'Get current online user list success! ',
+        data: {userList: onlineUserList}
+    });
+}
+
 module.exports = {
     index, 
     signup,
     login,
-    testau
+    testau,
+    getCurrentUser,
+    logout
 }
