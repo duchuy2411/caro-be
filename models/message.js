@@ -12,7 +12,8 @@ const schemaMessage = new Schema ({
         type: String
     },
     time: {
-        type: Date
+        type: Date,
+        default: Date.now()
     }
 }) 
 

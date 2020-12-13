@@ -2,14 +2,8 @@ const Online = require("../../models/online");
 const User = require("../../models/user");
 
 const online = async (user) => {
-
     const newOnline = new Online({iduser: user.iduser, displayname: user.displayname});
-
     await newOnline.save();
-
-    const listUser = await Online.find({});
-    
-    return listUser;
 }
 
 const offline = (user) => {
@@ -19,7 +13,13 @@ const offline = (user) => {
     });
 }
 
+const listOnline = async () => {
+    const listUser = await Online.find({});
+    return listUser;
+}
+
 module.exports = {
     online,
-    offline
+    offline,
+    listOnline
 }

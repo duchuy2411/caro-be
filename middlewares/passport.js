@@ -29,13 +29,12 @@ new JwtStrategy(
 );
 // Passport local
 passport.use(
-new LocalStrategy(
+    new LocalStrategy(
     {
     usernameField: "username",
     },
     async (username, password, done) => {
-    try {
-        
+        try {
         const user = await User.findOne({ username });
     
         if (!user) return done(null, false);
@@ -45,9 +44,29 @@ new LocalStrategy(
         if (!isCorrectPassword) return done(null, false);
 
         done(null, user);
-    } catch (error) {
-        done(error, false);
+        } catch (error) {
+            done(error, false);
+        }
     }
-    }
+    )
 )
-);
+
+// passport.use('local.signin', new LocalStrategy({
+//       passReqToCallback: true
+//     }, function (req, username, password, done) {
+//       try {
+//         const user = User.findOne({ username });
+//         console.log(username);
+//         if (!user) return done(null, false);
+        
+//         const isCorrectPassword = User.isValidPassword(password);
+
+//         if (!isCorrectPassword) return done(null, false);
+
+//         done(null, user);
+//       } catch (error) {
+//         done(error, false);
+//       }
+//     }
+//   )
+// );

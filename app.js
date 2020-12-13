@@ -4,13 +4,15 @@ var app = express();
 
 const http = require('http').createServer(app);
 const io = require('./socketio/index').listen(http);
+const bodyParser = require("body-parser");
 
 const cors = require('cors')
 
 const morgan = require('morgan')
 //router
 const user = require("./router/user/index.js");
-const admin = require("./router/admin/index.js")
+const admin = require("./router/admin/index.js");
+const board = require("./router/board/index.js");
 
 require('./models/mongoose.js');
 const dotenv = require("dotenv").config()
@@ -27,9 +29,13 @@ app.use(range);
 app.use(cors())
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
-app.use("/admin", admin)
+app.use("/admin", admin);
 app.use("/api/users", user);
+app.use("/boards", board);
 
 app.get("/", (req,res) => {
     res.status(200).json({
