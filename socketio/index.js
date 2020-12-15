@@ -47,6 +47,40 @@ module.exports.listen = function (app) {
         //     user.emit('list-online', data);
         // })
 
+        user.on('join-room', async function(data) {
+            console.log("Join:" ,data);
+
+            const join_instance = await Board.joinBoard(data);
+            console.log("instance: ",join_instance)
+            if (join_instance.message === "Room full!") {
+                console.log("Error join");
+                user.emit('error-join', join_instance);
+                return
+            } 
+
+            console.log("Vẫn vào!");
+            user.join(data[0]);
+
+            user.on('message', function(msg) {
+                console.log(msg);
+                user.to(data[0]).emit("message-room", msg[0]);
+            })
+
+            user.on('play-caro', function(info_game) {
+                user.to(data[0]).emit("receive", info_game);
+            })
+
+            user.on('win-game', function(info_game) {
+                user.to(data[0]).emit("win-game", info_game);
+            })
+
+            user.on('leave-room', function(){
+                console.log("Leave: ", data);
+                user.leave(data[0]);
+                Board.leaveBoard(data);
+            })
+        })
+
         user.on('disconnect', async function (data) {
             console.log(user.request._query['displayname'], "disconnected!");
             Online.offline(dataUser.iduser);
