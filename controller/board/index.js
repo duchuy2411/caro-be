@@ -12,6 +12,15 @@ const getAll = async(req, res) => {
 
 const createBoard = async(req, res) => {
     const {user, width, height} = req.body;
+
+    const exist_board = await Board.find({id_user1: user});
+
+    if (exist_board.length !== 0) return res.status(200).json({
+        error: 1,
+        message: 'Exists user!!',
+        data: exist_board[0]
+    });
+
     const board = new Board({
         id_user1: user,
         id_user2: null,

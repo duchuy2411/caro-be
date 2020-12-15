@@ -2,6 +2,8 @@ const socketio = require('socket.io');
 const { io } = require('socket.io-client');
 
 const Online = require('./Online/index');
+const Board = require('./Board/index');
+
 const sessionStorage = require('node-sessionstorage');
 
 module.exports.listen = function (app) {
@@ -45,6 +47,32 @@ module.exports.listen = function (app) {
         //     data = await Online.online({ iduser: dataUser['iduser'], displayname: dataUser['displayname'] })
         //     user.emit('list-online', data);
         // })
+
+        user.on('join-room', async function(data) {
+            console.log("Join:" ,data);
+
+            const join_instance = await Board.joinBoard(data);
+            console.log(join_instance)
+            if (join_instance.message === "Room full!") {
+                console.log("Error join");
+                user.emit('error-join', join_instance);
+                return
+            } 
+
+            console.log("Vẫn vào!");
+            user.join(data[0]);
+
+            user.on('message', function(msg) {
+                console.log(msg);
+                user.to(data[0]).emit("message-room", msg[0]);
+            })
+
+            user.on('leave-room', function(){
+                console.log("Leave: ", data);
+                user.leave(data[0]);
+                Board.leaveBoard(data);
+            })
+        })
 
         user.on('disconnect', async function (data) {
             console.log(user.request._query['displayname'], "disconnected!");
