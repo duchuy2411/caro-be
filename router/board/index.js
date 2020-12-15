@@ -9,5 +9,7 @@ router.route('/join')
         .post(BoardController.joinBoard)
 router.route('/leave')
         .post(BoardController.leaveBoard)
+router.route('/:id')
+    .get(BoardController.getBoardByCode)
 
 module.exports = router;
