@@ -1,14 +1,17 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const schemaMessage = new Schema ({
-    from: {
+const MessageSchema = new Schema ({
+    fromUsername: {
         type: String
     },
-    to: {
-        type: Array
+    fromDisplayName: {
+        type: String
     },
-    message: {
+    fromBoardId: {
+        type: String
+    },
+    content: {
         type: String
     },
     time: {
@@ -17,6 +20,6 @@ const schemaMessage = new Schema ({
     }
 }) 
 
-const Message = mongoose.model('Message', schemaMessage);
+const Message = mongoose.model('Message', MessageSchema);
 
 module.exports = Message;

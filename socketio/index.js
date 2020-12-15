@@ -2,6 +2,7 @@ const socketio = require('socket.io');
 const { io } = require('socket.io-client');
 
 const Online = require('./Online/index');
+const Chat = require('./Chat/index');
 const sessionStorage = require('node-sessionstorage');
 
 module.exports.listen = function (app) {
@@ -54,6 +55,12 @@ module.exports.listen = function (app) {
         
             io.emit('list-online', dataOfline);
         })
+
+        user.on('send-message', async function (data) {
+            await Chat.sendMessage(data);
+            user.emit('update-area-chat', data);
+        })
+
     })
 
     return io;

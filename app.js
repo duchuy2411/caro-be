@@ -13,6 +13,7 @@ const morgan = require('morgan')
 const user = require("./router/user/index.js");
 const admin = require("./router/admin/index.js");
 const board = require("./router/board/index.js");
+const message = require('./router/message/index.js');
 
 require('./models/mongoose.js');
 const dotenv = require("dotenv").config()
@@ -36,6 +37,7 @@ app.use(bodyParser.urlencoded({
 app.use("/admin", admin);
 app.use("/api/users", user);
 app.use("/boards", board);
+app.use("/messages", message);
 
 app.get("/", (req,res) => {
     res.status(200).json({
