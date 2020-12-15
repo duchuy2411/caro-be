@@ -27,7 +27,7 @@ const getBoardByCode = async (req,res) => {
 }
 
 const createBoard = async(req, res) => {
-    const {user, width, height} = req.body;
+    const {user, width, height, title, description} = req.body;
 
     const exist_board = await Board.find({id_user1: user});
 
@@ -36,7 +36,7 @@ const createBoard = async(req, res) => {
         message: 'Exists user!!',
         data: exist_board[0]
     });
-    const {user, width, height, title, description} = req.body;
+
     let oldBoard, code;
     do {
         code = Math.floor(Math.random() * (10000 - 1) + 1);
@@ -56,10 +56,12 @@ const createBoard = async(req, res) => {
 
     const new_board = await board.save();
 
+    const new_board_get = await Board.findOne({id_user1: user})
+
     return res.status(200).json({
         error: 0,
         message: '',
-        data: new_board
+        data: new_board_get
     })
 }
 

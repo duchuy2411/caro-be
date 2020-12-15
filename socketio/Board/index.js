@@ -1,6 +1,7 @@
 const Board = require('../../models/board');
 
 const joinBoard = async (data) => {
+    console.log("tạo");
     const boardid = data[0];
     const user2 = data[1];
 
@@ -12,11 +13,14 @@ const joinBoard = async (data) => {
     }
 
     console.log(search_board);
-    if (search_board.id_user1 === user2) return;
+    if (search_board.id_user1 === user2) return {
+        error: 0,
+        message: "you here!"
+    }
 
     const update_board = await Board.findOneAndUpdate({_id: boardid}, {id_user2: user2});
     const new_board = await Board.find({_id: boardid});
-
+    console.log("New board: ", new_board);
     return {
         error: 0,
         message: 'Join success!',
