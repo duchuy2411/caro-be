@@ -11,5 +11,9 @@ router.route('/leave')
         .post(BoardController.leaveBoard)
 router.route('/:id')
     .get(BoardController.getBoardByCode)
+router.route('/addhistory/:id')
+    .post(BoardController.addHistory)
+router.route('/gethistory/:id')
+    .get(BoardController.getHistoryList)
 
 module.exports = router;
