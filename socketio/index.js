@@ -16,13 +16,8 @@ module.exports.listen = function (app) {
 
     io.on('connection', async function (user) {
         console.log(user.request._query['displayname'], 'connected');
-        // let currentUserString = sessionStorage.getItem('currentuser');
         const dataUser = user.request._query;
         await Online.online(user.request._query);
-
-        // console.log(user.request._query['displayname'], "is connecting!!");
-        // let data = await Online.online({ iduser: dataUser['iduser'], displayname: dataUser['displayname'] });
-        // user.emit('list-online', data);
 
         // vô web lần đầu
         // if (!currentUserString) {

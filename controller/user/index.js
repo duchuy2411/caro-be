@@ -22,6 +22,8 @@ const index = async (req, res) => {
     })
 }
 
+let currentUser = null;
+
 const login = async (req, res) => {
 
     const token = encodedToken(req.user._id);
@@ -38,9 +40,8 @@ const login = async (req, res) => {
         // });
         
         //thêm tài khoản đã đăng nhập
-        sessionStorage.setItem('currentuser', JSON.stringify(user));
-        const newOnline = new Online({iduser: user._id, displayname: user.displayname});
-        await newOnline.save();
+        //sessionStorage.setItem('currentuser', JSON.stringify(user));
+        currentUser = user;
 
         return res.redirect('http://localhost:3000/play');
         // return res.redirect('http://localhost:3000/play').json({
@@ -87,14 +88,31 @@ const testau = async (req, res, next) => {
     })
 }
 
+// const getCurrentUser = async (req, res, next) => {
+//     let currentUserString = sessionStorage.getItem('currentuser');
+//     if (currentUserString) {
+//         const currentUserObject = JSON.parse(currentUserString);
+//         return res.json({
+//             error: 0,
+//             message: 'Get current user success! ',
+//             data: {user: currentUserObject}
+//         });
+//     }
+//     else {
+//         return res.json({
+//             error: 0,
+//             message: 'Not exist current user',
+//             data: {user: null}
+//         });
+//     }
+// }
+
 const getCurrentUser = async (req, res, next) => {
-    let currentUserString = sessionStorage.getItem('currentuser');
-    if (currentUserString) {
-        const currentUserObject = JSON.parse(currentUserString);
+    if (currentUser) {
         return res.json({
             error: 0,
             message: 'Get current user success! ',
-            data: {user: currentUserObject}
+            data: {user: currentUser}
         });
     }
     else {
@@ -107,12 +125,13 @@ const getCurrentUser = async (req, res, next) => {
 }
 
 const logout = async (req, res) => {
-    const user = JSON.parse(sessionStorage.getItem('currentuser'));
-    Online.findOneAndDelete({iduser: user._id}, function(err, docs) {
+    //const user = JSON.parse(sessionStorage.getItem('currentuser'));
+    Online.findOneAndDelete({iduser: currentUser._id}, function(err, docs) {
         if(err) console.log(err) 
         else return;
     });
-    sessionStorage.setItem('currentuser', '');
+    //sessionStorage.setItem('currentuser', '');
+    currentUser = null;
 
     const onlineUserList = await Online.find({});
     return res.json({
