@@ -4,6 +4,7 @@ const { io } = require('socket.io-client');
 const Online = require('./Online/index');
 const Chat = require('./Chat/index');
 const sessionStorage = require('node-sessionstorage');
+const Board = require("../controller/board");
 
 module.exports.listen = function (app) {
 
@@ -51,13 +52,13 @@ module.exports.listen = function (app) {
         user.on('join-room', async function(data) {
             console.log("Join:" ,data);
 
-            const join_instance = await Board.joinBoard(data);
-            console.log("instance: ",join_instance)
-            if (join_instance.message === "Room full!") {
-                console.log("Error join");
-                user.emit('error-join', join_instance);
-                return
-            } 
+            // const join_instance = await Board.joinBoard(data);
+            // console.log("instance: ",join_instance)
+            // if (join_instance.message === "Room full!") {
+            //     console.log("Error join");
+            //     user.emit('error-join', join_instance);
+            //     return
+            // }
 
             console.log("Vẫn vào!");
             user.join(data[0]);
@@ -68,6 +69,7 @@ module.exports.listen = function (app) {
             })
 
             user.on('play-caro', function(info_game) {
+                console.log('emit play-caro')
                 user.to(data[0]).emit("receive", info_game);
             })
 
@@ -87,7 +89,7 @@ module.exports.listen = function (app) {
             Online.offline(dataUser.iduser);
 
             let dataOfline = await Online.listOnline();
-        
+
             io.emit('list-online', dataOfline);
         })
 

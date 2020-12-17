@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
-
-mongoose.connect('mongodb+srv://dbcaro:Huykhung123.@cluster0.jtp3p.mongodb.net/caroDB_Backend?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+const connect = 'mongodb+srv://dbcaro:Huykhung123.@cluster0.jtp3p.mongodb.net/caroDB_Backend?retryWrites=true&w=majority';
+const connect1 = 'mongodb+srv://caro:1@cluster0.1s8sv.mongodb.net/caro-online?retryWrites=true&w=majority';
+mongoose.connect(connect1, { useNewUrlParser: true, useUnifiedTopology: true });
 
 var db = mongoose.connection;
 //Bắt sự kiện error

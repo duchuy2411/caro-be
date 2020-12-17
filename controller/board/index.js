@@ -29,13 +29,15 @@ const getBoardByCode = async (req,res) => {
 const createBoard = async(req, res) => {
     const {user, width, height, title, description} = req.body;
 
-    const exist_board = await Board.find({id_user1: user});
+    if (user) {
+        const exist_board = await Board.find({id_user1: user});
 
-    if (exist_board.length !== 0) return res.status(200).json({
-        error: 1,
-        message: 'Exists user!!',
-        data: exist_board[0]
-    });
+        if (exist_board.length !== 0) return res.status(200).json({
+            error: 1,
+            message: 'Exists user!!',
+            data: exist_board[0]
+        });
+    }
 
     let oldBoard, code;
     do {
@@ -65,6 +67,45 @@ const createBoard = async(req, res) => {
     })
 }
 
+const addHistory = async (req, res) => {
+    const {winner} = req.body;
+    const board = await Board.findOne({code: req.params.id});
+
+    if (board) {
+        let today = new Date();
+        let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        let dateTime = time+' '+date;
+        const updatedBoard = await Board.updateOne({code: req.params.id}, {history: [...board.history, {winner, date: dateTime}]});
+        console.log(updatedBoard);
+        return res.status(200).json({
+            error: 0,
+            message: 'add history success',
+            data: updatedBoard
+        })
+    }
+    return res.status(404).json({
+        error: 1,
+        message: 'not found',
+    })
+}
+
+const getHistoryList = async (req, res) => {
+    const board = await Board.findOne({code: req.params.id});
+
+    if (board) {
+        return res.status(200).json({
+            error: 0,
+            message: 'add history success',
+            data: board.history
+        })
+    }
+    return res.status(404).json({
+        error: 1,
+        message: 'not found',
+    })
+}
+
 const joinBoard = async (req, res) => {
     const { boardid, user2 } = req.body;
     const update_board = await Board.findOneAndUpdate({_id: boardid}, {id_user2: user2});
@@ -73,7 +114,7 @@ const joinBoard = async (req, res) => {
         error: 0,
         message: 'Join success!',
         data: new_board
-    })
+    });
 }
 
 const leaveBoard = async (req, res) => {
@@ -107,5 +148,7 @@ module.exports = {
     createBoard,
     joinBoard,
     leaveBoard,
-    getBoardByCode
+    getBoardByCode,
+    addHistory,
+    getHistoryList
 }
