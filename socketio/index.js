@@ -14,6 +14,7 @@ module.exports.listen = function (app) {
     });
 
     io.on('connection', async function (user) {
+        console.log(user.request._query['displayname'], 'connected');
         // let currentUserString = sessionStorage.getItem('currentuser');
         const dataUser = user.request._query;
         await Online.online(user.request._query);
