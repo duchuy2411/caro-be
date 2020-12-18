@@ -4,15 +4,15 @@ var app = express();
 
 const http = require('http').createServer(app);
 const io = require('./socketio/index').listen(http);
+
 const bodyParser = require("body-parser");
+
 
 const cors = require('cors')
 
 const morgan = require('morgan')
 
 const cookieParser = require('cookie-parser');
-const session = require("express-session");
-
 
 //router
 const user = require("./router/user/index.js");
@@ -36,16 +36,17 @@ app.use(cors())
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({
-    extended: false
+    extended: true
 }));
+app.use(cookieParser());
 
-app.use(cookieParser("secret"));
-app.use(session({
-    secret: "secret",
-    resave: false,
-    saveUninitialized: true
-}));
-
+// app.use(session({
+//     secret: "secret",
+//     resave: true,
+//     saveUninitialized: true
+// }));
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 
 

@@ -8,8 +8,10 @@ router.route("/")
     .get(UserController.getCurrentUser)
     .post(UserController.signup)
 router.route("/login")
-    .get(UserController.getCurrentUser)
     .post(passport.authenticate('local', {session: false}), UserController.login)
+
+router.route("/:username")
+    .get(UserController.getCurrentUser)
 
 router.route("/logout/:iduser")
     .get(UserController.logout)

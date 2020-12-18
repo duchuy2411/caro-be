@@ -5,6 +5,7 @@ const JWT = require("jsonwebtoken");
 const { Model } = require('mongoose');
 const sessionStorage = require('node-sessionstorage');
 
+
 const encodedToken = (id) => {
     return JWT.sign({
         iss: '',
@@ -22,8 +23,6 @@ const index = async (req, res) => {
     })
 }
 
-//let currentUser = null;
-let tmpUser = null;
 
 const login = async (req, res) => {
 
@@ -43,12 +42,17 @@ const login = async (req, res) => {
         //thêm tài khoản đã đăng nhập
         //sessionStorage.setItem('currentuser', JSON.stringify(user));
         
-        tmpUser = user;
+        //req.session.currentUsername = tmpUser.username;
+        
+        //res.cookie('currentUsername', tmpUser.username, { maxAge: 900000, secure: false, httpOnly: false });
+        
+        //cookies.set('currentUsername', tmpUser.username);
+        //res.cookie('cookie', 'monster', { path: '/', secure: true })
         //req.cookieSessionHome.currentUser = tmpUser;
         //req.session.save();
         //currentUser = user;
 
-        return res.redirect('http://localhost:3000/play');
+        return res.cookie('currentUsername', user.username, {maxAge: 900000}).redirect('http://localhost:3000/play');
         // return res.redirect('http://localhost:3000/play').json({
         //     error: 0,
         //     message: 'Login  success!',
@@ -115,14 +119,15 @@ const testau = async (req, res, next) => {
 const getCurrentUser = async (req, res, next) => {
     //if (!req.session.user) 
     //    req.session.user = null;
-    req.session.currentUser = tmpUser
-    tmpUser = null;
-    
-    if (req.session.currentUser) {
+    //console.log(req.cookies['cookie']);
+    //req.session.currentUser = tmpUser
+    //tmpUser = null;
+    let currentUser = await User.findOne({username: req.params.username});
+    if (currentUser) {
         return res.json({
             error: 0,
             message: 'Get current user success! ',
-            data: {user: req.session.currentUser}
+            data: {user: currentUser}
         });
     }
     else {
@@ -136,7 +141,6 @@ const getCurrentUser = async (req, res, next) => {
 
 const logout = async (req, res) => {
     //const user = JSON.parse(sessionStorage.getItem('currentuser'));
-    
 
     Online.findOneAndDelete({iduser: req.params.iduser}, function(err, docs) {
         if(err) console.log(err) 
