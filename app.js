@@ -9,6 +9,11 @@ const bodyParser = require("body-parser");
 const cors = require('cors')
 
 const morgan = require('morgan')
+
+const cookieParser = require('cookie-parser');
+const session = require("express-session");
+
+
 //router
 const user = require("./router/user/index.js");
 const admin = require("./router/admin/index.js");
@@ -31,13 +36,25 @@ app.use(cors())
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({
-    extended: true
+    extended: false
 }));
+
+app.use(cookieParser("secret"));
+app.use(session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: true
+}));
+
+
+
 
 app.use("/admin", admin);
 app.use("/api/users", user);
 app.use("/boards", board);
 app.use("/messages", message);
+
+
 
 app.get("/", (req,res) => {
     res.status(200).json({

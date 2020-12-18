@@ -58,9 +58,10 @@ module.exports.listen = function (app) {
             console.log("Vẫn vào!");
             user.join(data[0]);
 
-            user.on('message', function(msg) {
-                console.log(msg);
-                user.to(data[0]).emit("message-room", msg[0]);
+            user.on("send-message", function (info_chat) {
+                console.log(info_chat.fromUsername + ": " + info_chat.content);
+                Chat.sendMessage(info_chat);
+                user.to(data[0]).emit("update-area-chat", info_chat);
             })
 
             user.on('play-caro', function(info_game) {
@@ -88,10 +89,7 @@ module.exports.listen = function (app) {
             io.emit('list-online', dataOfline);
         })
 
-        user.on('send-message', async function (data) {
-            await Chat.sendMessage(data);
-            user.emit('update-area-chat', data);
-        })
+        
 
     })
 

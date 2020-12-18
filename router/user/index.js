@@ -11,7 +11,7 @@ router.route("/login")
     .get(UserController.getCurrentUser)
     .post(passport.authenticate('local', {session: false}), UserController.login)
 
-router.route("/logout")
+router.route("/logout/:iduser")
     .get(UserController.logout)
 
 // router.route("/login")

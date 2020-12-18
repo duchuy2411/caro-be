@@ -22,7 +22,8 @@ const index = async (req, res) => {
     })
 }
 
-let currentUser = null;
+//let currentUser = null;
+let tmpUser = null;
 
 const login = async (req, res) => {
 
@@ -41,7 +42,11 @@ const login = async (req, res) => {
         
         //thêm tài khoản đã đăng nhập
         //sessionStorage.setItem('currentuser', JSON.stringify(user));
-        currentUser = user;
+        
+        tmpUser = user;
+        //req.cookieSessionHome.currentUser = tmpUser;
+        //req.session.save();
+        //currentUser = user;
 
         return res.redirect('http://localhost:3000/play');
         // return res.redirect('http://localhost:3000/play').json({
@@ -108,11 +113,16 @@ const testau = async (req, res, next) => {
 // }
 
 const getCurrentUser = async (req, res, next) => {
-    if (currentUser) {
+    //if (!req.session.user) 
+    //    req.session.user = null;
+    req.session.currentUser = tmpUser
+    tmpUser = null;
+    
+    if (req.session.currentUser) {
         return res.json({
             error: 0,
             message: 'Get current user success! ',
-            data: {user: currentUser}
+            data: {user: req.session.currentUser}
         });
     }
     else {
@@ -126,12 +136,16 @@ const getCurrentUser = async (req, res, next) => {
 
 const logout = async (req, res) => {
     //const user = JSON.parse(sessionStorage.getItem('currentuser'));
-    Online.findOneAndDelete({iduser: currentUser._id}, function(err, docs) {
+    
+
+    Online.findOneAndDelete({iduser: req.params.iduser}, function(err, docs) {
         if(err) console.log(err) 
         else return;
     });
     //sessionStorage.setItem('currentuser', '');
-    currentUser = null;
+    //req.cookieSession.currentUser = null;
+    //req.session.currentUser = '';
+    //currentUser = null;
 
     const onlineUserList = await Online.find({});
     return res.json({
