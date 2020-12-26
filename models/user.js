@@ -6,15 +6,41 @@ const bcryptjs = require('bcryptjs');
 const schemaUser = new Schema ({
     displayname: {
         type: String
+        // Khong co ky tu dac biet
+        // 5 - 50
     },
     username: {
         type: String
+        // Khong co khoang trang
+        // 5 - 50
+        // unique
     },
     password: {
         type: String
+        // > 6
     },
     email: {
         type: String
+        // dinh dang xxx@xxx.xxx
+    },
+    cup: {
+        type: Number
+        // 
+    },
+    total_match: {
+        type: Number
+    },
+    win_match: {
+        type: Number
+    },
+    win_percent: {
+        type: Number
+    },
+    block: {
+        type: Number
+    },
+    is_Delete: {
+        type: Number
     }
 })
 

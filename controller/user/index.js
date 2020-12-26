@@ -2,8 +2,10 @@ const User = require('../../models/user');
 const Online = require('../../models/online');
 
 const JWT = require("jsonwebtoken");
-const { Model } = require('mongoose');
 const sessionStorage = require('node-sessionstorage');
+
+const UserService = require("../../service/UserService");
+const ResApiService = require("../../service/ResApiService");
 
 const encodedToken = (id) => {
     return JWT.sign({
@@ -15,11 +17,15 @@ const encodedToken = (id) => {
 };
 
 const index = async (req, res) => {
-    return res.status(200).json({
-        error: 0,
-        message: "OK",
-        data : await User.find({})
-    })
+    try {
+        const data = await UserService.getAll();
+        if (!data) return ResApiService.ResApiNotFound(res);
+        
+        return ResApiService.ResApiSucces(data, "", 200, res);
+    } catch(error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
+    }
 }
 
 const login = async (req, res) => {
@@ -30,24 +36,11 @@ const login = async (req, res) => {
     
     if (user) {
         res.setHeader('Authorization', token);
-
-        //xóa tk khách trong ds online sau khi đăng nhập
-        // Online.findOneAndDelete({iduser: JSON.parse(sessionStorage.getItem('currentuser'))._id}, function(err, docs) {
-        //     if(err) console.log(err) 
-        //     else return;
-        // });
-        
-        //thêm tài khoản đã đăng nhập
         sessionStorage.setItem('currentuser', JSON.stringify(user));
         const newOnline = new Online({iduser: user._id, displayname: user.displayname});
         await newOnline.save();
 
         return res.redirect('http://localhost:3000/play');
-        // return res.redirect('http://localhost:3000/play').json({
-        //     error: 0,
-        //     message: 'Login  success!',
-        //     data: {user: user}
-        // });
     }
     else {
         return res.redirect('http://localhost:3000/sign-in');
@@ -71,14 +64,6 @@ const signup = async (req, res, next) => {
     console.log(usernew);
 
     return res.redirect('http://localhost:3000/sign-in');
-
-    // return res.status(200).json({
-    //     error: 0,
-    //     message: 'Create success',
-    //     data: {
-    //         user: usernew
-    //     }
-    // })
 }
 
 const testau = async (req, res, next) => {

@@ -1,70 +1,43 @@
 const Board = require('../../models/board')
+const BoardService = require('../../service/BoardService');
+const ResApiService = require('../../service/ResApiService');
 
 const getAll = async(req, res) => {
-    const allBoard = await Board.find({});
-    return res.status(200).json(
-        {
-            error: 0,
-            message: '',
-            data: allBoard
-        });
+    try {
+        const data = await BoardService.getAll();
+        if (!data) return ResApiService.ResApiNotFound(res);
+
+        return ResApiService.ResApiSucces(data, '', 200, res);
+    } catch (error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
+    }
 }
 
 const getBoardByCode = async (req,res) => {
-    const board = await Board.findOne({code: req.params.id});
-    if (board) {
-        return res.status(200).json({
-            error: 0,
-            message: '',
-            data: board
-        })
-    } else {
-        return res.status(404).json({
-            error: 1,
-            message: 'not found'
-        })
+    try {
+        const data = await BoardService.getBoardByCode(req.params.id);
+        if (!data) return ResApiService.ResApiNotFound(res);
+
+        return ResApiService.ResApiSucces(data, '', 200, res);
+    }
+    catch (error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
     }
 }
 
 const createBoard = async(req, res) => {
-    const {user, width, height, title, description} = req.body;
+    try {
+        const createData = await BoardService.create(req.body);
+        if (!createData) return ResApiService.ResApiNotFound(res);
 
-    if (user) {
-        const exist_board = await Board.find({id_user1: user});
-
-        if (exist_board.length !== 0) return res.status(200).json({
-            error: 1,
-            message: 'Exists user!!',
-            data: exist_board[0]
-        });
+        return ResApiService.ResApiSucces(createBoard, "Create success!", 201, res);
+    } catch (error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
     }
-
-    let oldBoard, code;
-    do {
-        code = Math.floor(Math.random() * (10000 - 1) + 1);
-        oldBoard = await Board.findOne({code});
-    } while (oldBoard);
-
-    const board = new Board({
-        code,
-        title,
-        description,
-        id_user1: user,
-        id_user2: null,
-        size_width: width,
-        size_height: height,
-        history: []
-    })
-
-    const new_board = await board.save();
-
-    const new_board_get = await Board.findOne({id_user1: user})
-
-    return res.status(200).json({
-        error: 0,
-        message: '',
-        data: new_board_get
-    })
+    
 }
 
 const addHistory = async (req, res) => {
@@ -107,40 +80,42 @@ const getHistoryList = async (req, res) => {
 }
 
 const joinBoard = async (req, res) => {
-    const { boardid, user2 } = req.body;
-    const update_board = await Board.findOneAndUpdate({_id: boardid}, {id_user2: user2});
-    const new_board = await Board.find({_id: boardid});
-    return res.status(200).json({
-        error: 0,
-        message: 'Join success!',
-        data: new_board
-    });
+    try {
+        const id = req.body.boardid;
+        const id_user2 = req.body.user2;
+        const data = await BoardService.join(id, id_user2);
+        if (!data) return ResApiService.ResApiNotFound(res);
+
+        return ResApiService.ResApiSucces(data, '', 202, res);
+    } catch (error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
+    }
 }
 
 const leaveBoard = async (req, res) => {
-    const {boardid, user} = req.body;
-    const update_board = await Board.find({_id: boardid});
+    try {
+        const {boardid, user} = req.body;
+        const data = await BoardService.leave(boardid, user);
+        if (!data) return ResApiService.ResApiNotFound(res);
 
-    console.log(update_board[0].id_user1, " ", user);
-
-    if (update_board[0].id_user1 === user) {
-        if (update_board[0].id_user2 === null) {
-            const delete_board = await Board.deleteOne({_id: boardid});
-            return res.status(200).json({
-                error: 0,
-                message: 'Leave success!'
-            })
-        }
-        const replace_user = update_board[0].id_user2;
-        const new_board = await Board.findOneAndUpdate({_id: boardid}, {id_user1: replace_user, id_user2: null})
-    } else {
-        const new_board = await Board.findOneAndUpdate({_id: boardid}, {id_user2: null});
+        return ResApiService.ResApiSucces(data, '', 202, res);
+    } catch (error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
     }
+}
 
-    return res.status(200).json({
-        error: 0,
-        message: 'Leave success!'
-    })
+const update = async (req, res) => {
+    try {
+        const data = await BoardService.update(req.body);
+        if (!data) return ResApiService.ResApiNotFound(res);
+
+        return ResApiService.ResApiSucces(data, '', 202, res);
+    } catch (error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
+    }
 }
 
 module.exports = {

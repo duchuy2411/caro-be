@@ -11,6 +11,9 @@ const MessageSchema = new Schema ({
     fromBoardId: {
         type: String
     },
+    fromBoardMatch: {
+        type: String
+    },
     content: {
         type: String
     },
