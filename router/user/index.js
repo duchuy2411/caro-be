@@ -5,13 +5,15 @@ const passportConfig = require('../../middlewares/passport');
 const UserController = require('../../controller/user/index')
 const sessionStorage = require('node-sessionstorage');
 router.route("/")
-    .get(UserController.index)
+    .get(UserController.getCurrentUser)
     .post(UserController.signup)
 router.route("/login")
-    .get(UserController.getCurrentUser)
     .post(passport.authenticate('local', {session: false}), UserController.login)
 
-router.route("/logout")
+router.route("/:username")
+    .get(UserController.getCurrentUser)
+
+router.route("/logout/:iduser")
     .get(UserController.logout)
 
 // router.route("/login")

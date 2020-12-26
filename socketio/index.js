@@ -15,13 +15,9 @@ module.exports.listen = function (app) {
     });
 
     io.on('connection', async function (user) {
-        // let currentUserString = sessionStorage.getItem('currentuser');
+        console.log(user.request._query['displayname'], 'connected');
         const dataUser = user.request._query;
         await Online.online(user.request._query);
-
-        // console.log(user.request._query['displayname'], "is connecting!!");
-        // let data = await Online.online({ iduser: dataUser['iduser'], displayname: dataUser['displayname'] });
-        // user.emit('list-online', data);
 
         // vô web lần đầu
         // if (!currentUserString) {
@@ -62,9 +58,10 @@ module.exports.listen = function (app) {
             console.log("Vẫn vào!");
             user.join(data[0]);
 
-            user.on('message', function(msg) {
-                console.log(msg);
-                user.to(data[0]).emit("message-room", msg[0]);
+            user.on("send-message", function (info_chat) {
+                console.log(info_chat.fromUsername + ": " + info_chat.content);
+                Chat.sendMessage(info_chat);
+                user.to(data[0]).emit("update-area-chat", info_chat);
             })
 
             user.on('play-caro', function(info_game) {
@@ -90,11 +87,6 @@ module.exports.listen = function (app) {
             let dataOfline = await Online.listOnline();
 
             io.emit('list-online', dataOfline);
-        })
-
-        user.on('send-message', async function (data) {
-            await Chat.sendMessage(data);
-            user.emit('update-area-chat', data);
         })
 
     })

@@ -28,6 +28,7 @@ const index = async (req, res) => {
     }
 }
 
+
 const login = async (req, res) => {
 
     const token = encodedToken(req.user._id);
@@ -36,11 +37,32 @@ const login = async (req, res) => {
     
     if (user) {
         res.setHeader('Authorization', token);
-        sessionStorage.setItem('currentuser', JSON.stringify(user));
-        const newOnline = new Online({iduser: user._id, displayname: user.displayname});
-        await newOnline.save();
 
-        return res.redirect('http://localhost:3000/play');
+        //xóa tk khách trong ds online sau khi đăng nhập
+        // Online.findOneAndDelete({iduser: JSON.parse(sessionStorage.getItem('currentuser'))._id}, function(err, docs) {
+        //     if(err) console.log(err) 
+        //     else return;
+        // });
+        
+        //thêm tài khoản đã đăng nhập
+        //sessionStorage.setItem('currentuser', JSON.stringify(user));
+        
+        //req.session.currentUsername = tmpUser.username;
+        
+        //res.cookie('currentUsername', tmpUser.username, { maxAge: 900000, secure: false, httpOnly: false });
+        
+        //cookies.set('currentUsername', tmpUser.username);
+        //res.cookie('cookie', 'monster', { path: '/', secure: true })
+        //req.cookieSessionHome.currentUser = tmpUser;
+        //req.session.save();
+        //currentUser = user;
+        
+        return res.cookie('currentUsername', user.username, {maxAge: 900000}).redirect('http://localhost:3000');
+        // return res.redirect('http://localhost:3000/play').json({
+        //     error: 0,
+        //     message: 'Login  success!',
+        //     data: {user: user}
+        // });
     }
     else {
         return res.redirect('http://localhost:3000/sign-in');
@@ -72,14 +94,38 @@ const testau = async (req, res, next) => {
     })
 }
 
+// const getCurrentUser = async (req, res, next) => {
+//     let currentUserString = sessionStorage.getItem('currentuser');
+//     if (currentUserString) {
+//         const currentUserObject = JSON.parse(currentUserString);
+//         return res.json({
+//             error: 0,
+//             message: 'Get current user success! ',
+//             data: {user: currentUserObject}
+//         });
+//     }
+//     else {
+//         return res.json({
+//             error: 0,
+//             message: 'Not exist current user',
+//             data: {user: null}
+//         });
+//     }
+// }
+
 const getCurrentUser = async (req, res, next) => {
-    let currentUserString = sessionStorage.getItem('currentuser');
-    if (currentUserString) {
-        const currentUserObject = JSON.parse(currentUserString);
+    //if (!req.session.user) 
+    //    req.session.user = null;
+    //console.log(req.cookies['cookie']);
+    //req.session.currentUser = tmpUser
+    //tmpUser = null;
+    let currentUser = await User.findOne({username: req.params.username});
+    
+    if (currentUser) {
         return res.json({
             error: 0,
             message: 'Get current user success! ',
-            data: {user: currentUserObject}
+            data: {user: currentUser}
         });
     }
     else {
@@ -92,12 +138,16 @@ const getCurrentUser = async (req, res, next) => {
 }
 
 const logout = async (req, res) => {
-    const user = JSON.parse(sessionStorage.getItem('currentuser'));
-    Online.findOneAndDelete({iduser: user._id}, function(err, docs) {
+    //const user = JSON.parse(sessionStorage.getItem('currentuser'));
+    
+    Online.findOneAndDelete({iduser: req.params.iduser}, function(err, docs) {
         if(err) console.log(err) 
         else return;
     });
-    sessionStorage.setItem('currentuser', '');
+    //sessionStorage.setItem('currentuser', '');
+    //req.cookieSession.currentUser = null;
+    //req.session.currentUser = '';
+    //currentUser = null;
 
     const onlineUserList = await Online.find({});
     return res.json({
