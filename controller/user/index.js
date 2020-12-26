@@ -51,8 +51,8 @@ const login = async (req, res) => {
         //req.cookieSessionHome.currentUser = tmpUser;
         //req.session.save();
         //currentUser = user;
-
-        return res.cookie('currentUsername', user.username, {maxAge: 900000}).redirect('http://localhost:3000/play');
+        
+        return res.cookie('currentUsername', user.username, {maxAge: 900000}).redirect('http://localhost:3000');
         // return res.redirect('http://localhost:3000/play').json({
         //     error: 0,
         //     message: 'Login  success!',
@@ -123,6 +123,7 @@ const getCurrentUser = async (req, res, next) => {
     //req.session.currentUser = tmpUser
     //tmpUser = null;
     let currentUser = await User.findOne({username: req.params.username});
+    
     if (currentUser) {
         return res.json({
             error: 0,
@@ -141,7 +142,7 @@ const getCurrentUser = async (req, res, next) => {
 
 const logout = async (req, res) => {
     //const user = JSON.parse(sessionStorage.getItem('currentuser'));
-
+    
     Online.findOneAndDelete({iduser: req.params.iduser}, function(err, docs) {
         if(err) console.log(err) 
         else return;

@@ -89,8 +89,6 @@ module.exports.listen = function (app) {
             io.emit('list-online', dataOfline);
         })
 
-        
-
     })
 
     return io;

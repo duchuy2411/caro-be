@@ -4,6 +4,7 @@ const User = require("../../models/user");
 const online = async (user) => {
     const newOnline = new Online({iduser: user.iduser, displayname: user.displayname});
     await newOnline.save();
+    
 }
 
 const offline = (user) => {
