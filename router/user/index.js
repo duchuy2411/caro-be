@@ -6,15 +6,20 @@ const UserController = require('../../controller/user/index')
 const sessionStorage = require('node-sessionstorage');
 router.route("/")
     .get(UserController.getCurrentUser)
-    .post(UserController.signup)
+    .post(UserController.signup);
+
 router.route("/login")
     .post(passport.authenticate('local', {session: false}), UserController.login)
+
+router.route("/all")
+    .get(UserController.index);
 
 router.route("/:username")
     .get(UserController.getCurrentUser)
 
 router.route("/logout/:iduser")
     .get(UserController.logout)
+
 
 // router.route("/login")
 //     .get(UserController.testau)

@@ -22,6 +22,10 @@ class BoardService {
 
     async create(createData) {
         // Validate
+        console.log(createData);
+        const { title, description, id_user1 } = createData;
+
+        if (createData.password)
         if (createData.password.length < 6 && createData.password.length > 20) return null;
         if (createData.title.length > 50 && createData.title.length < 5) return null;
 
@@ -41,22 +45,33 @@ class BoardService {
             code,
             title,
             description,
-            id_user1: user,
+            id_user1: id_user1,
             id_user2: null,
-            size,
-            state: 1
+            state: 0
         })
     
         const new_board = await board.save();
         if (!new_board) return null;
-        console.log(new_board);
+
         return new_board;
-    
-        // const new_board_get = await Board.findOne({id_user1: user})
     }
 
     async update(updateData) {
         const data = await Board.findOneAndUpdate({_id: updateData._id}, {updateData});
+        if (!data) return null;
+
+        return data;
+    }
+
+    async delete(id) {
+        const data = await Board.findOneAndUpdate({_id: id}, {status: -1});
+        if (!data) return null;
+
+        return data;
+    }
+
+    async updateStatus(status, id) {
+        const data = await Board.findOneAndUpdate({_id: id}, {status: status});
         if (!data) return null;
 
         return data;
@@ -92,4 +107,8 @@ class BoardService {
             return new_board;
         }
     }
+
+
 }
+
+module.exports = new BoardService();

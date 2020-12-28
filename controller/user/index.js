@@ -70,22 +70,27 @@ const login = async (req, res) => {
 }
 
 const signup = async (req, res, next) => {
-    
-    let {displayname, username, password, email} = req.body;
+    try {
+        let {displayname, username, password, email} = req.body;
 
-    let user = new User({
-        displayname: displayname,
-        username: username,
-        password: password,
-        email: email
-    })
+        let user = new User({
+            displayname: displayname,
+            username: username,
+            password: password,
+            email: email
+        })
 
-    await user.save();
+        await user.save();
 
-    let usernew = await User.findOne({username: username});
-    console.log(usernew);
+        let usernew = await User.findOne({username: username});
+        console.log(usernew);
 
-    return res.redirect('http://localhost:3000/sign-in');
+        return ResApiService.ResApiSucces(usernew, 'Create success!', 201, res);
+    }
+    catch (error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
+    }
 }
 
 const testau = async (req, res, next) => {
