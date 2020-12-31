@@ -57,7 +57,7 @@ const login = async (req, res) => {
         //req.session.save();
         //currentUser = user;
         
-        return res.cookie('currentUsername', user.username, {maxAge: 900000}).redirect('http://localhost:3000');
+        return res.cookie('currentUsername', user.username, {maxAge: 3600000}).redirect('http://localhost:3000');
         // return res.redirect('http://localhost:3000/play').json({
         //     error: 0,
         //     message: 'Login  success!',
@@ -99,46 +99,24 @@ const testau = async (req, res, next) => {
     })
 }
 
-// const getCurrentUser = async (req, res, next) => {
-//     let currentUserString = sessionStorage.getItem('currentuser');
-//     if (currentUserString) {
-//         const currentUserObject = JSON.parse(currentUserString);
-//         return res.json({
-//             error: 0,
-//             message: 'Get current user success! ',
-//             data: {user: currentUserObject}
-//         });
-//     }
-//     else {
-//         return res.json({
-//             error: 0,
-//             message: 'Not exist current user',
-//             data: {user: null}
-//         });
-//     }
-// }
-
 const getCurrentUser = async (req, res, next) => {
-    //if (!req.session.user) 
-    //    req.session.user = null;
-    //console.log(req.cookies['cookie']);
-    //req.session.currentUser = tmpUser
-    //tmpUser = null;
     let currentUser = await User.findOne({username: req.params.username});
     
     if (currentUser) {
-        return res.json({
-            error: 0,
-            message: 'Get current user success! ',
-            data: {user: currentUser}
-        });
+        return ResApiService.ResApiSucces({user: currentUser}, 'Get current user success!', 200, res);
     }
     else {
-        return res.json({
-            error: 0,
-            message: 'Not exist current user',
-            data: {user: null}
-        });
+        return ResApiService.ResApiNotFound(res);
+    }
+}
+
+const getUserById = async (req, res, next) => {
+    let user = await User.findOne({_id: req.params.id});
+    if (user) {
+        return ResApiService.ResApiSucces({user: user}, 'Get user success!', 200, res);
+    }
+    else {
+        return ResApiService.ResApiNotFound(res);
     }
 }
 
@@ -149,17 +127,9 @@ const logout = async (req, res) => {
         if(err) console.log(err) 
         else return;
     });
-    //sessionStorage.setItem('currentuser', '');
-    //req.cookieSession.currentUser = null;
-    //req.session.currentUser = '';
-    //currentUser = null;
 
     const onlineUserList = await Online.find({});
-    return res.json({
-        error: 0,
-        message: 'Get current online user list success! ',
-        data: {userList: onlineUserList}
-    });
+    return ResApiService.ResApiSucces({userList: onlineUserList}, 'Get current online user list success!', 200, res);
 }
 
 module.exports = {
@@ -168,5 +138,6 @@ module.exports = {
     login,
     testau,
     getCurrentUser,
+    getUserById,
     logout
 }

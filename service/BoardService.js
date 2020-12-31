@@ -20,6 +20,12 @@ class BoardService {
         return result;
     }
 
+    async getBoardByIdUser1(id_user1) {
+        const result = await Board.findOne({id_user1: id_user1});
+        if (!result) return null;
+        return result;
+    }
+
     async create(createData) {
         // Validate
         console.log(createData);

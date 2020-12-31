@@ -17,6 +17,9 @@ router.route("/all")
 router.route("/:username")
     .get(UserController.getCurrentUser)
 
+router.route("/id/:id")
+    .get(UserController.getUserById);
+
 router.route("/logout/:iduser")
     .get(UserController.logout)
 
