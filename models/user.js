@@ -24,17 +24,21 @@ const schemaUser = new Schema ({
         // dinh dang xxx@xxx.xxx
     },
     cup: {
-        type: Number
-        // 
+        type: Number,
+        default: 0
+        //
     },
     total_match: {
-        type: Number
+        type: Number,
+        default: 0
     },
     win_match: {
-        type: Number
+        type: Number,
+        default: 0
     },
     win_percent: {
-        type: Number
+        type: Number,
+        default: 100
     },
     block: {
         type: Number

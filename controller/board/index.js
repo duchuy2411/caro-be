@@ -4,7 +4,7 @@ const ResApiService = require('../../service/ResApiService');
 
 const getAll = async(req, res) => {
     try {
-        const data = await BoardService.getAll();
+        const data = await BoardService.getBoardAlive();
         if (!data) return ResApiService.ResApiNotFound(res);
 
         return ResApiService.ResApiSucces(data, '', 200, res);
@@ -30,9 +30,10 @@ const getBoardByCode = async (req,res) => {
 const createBoard = async(req, res) => {
     try {
         const createData = await BoardService.create(req.body);
+        console.log("Create board:", createData);
         if (!createData) return ResApiService.ResApiNotFound(res);
 
-        return ResApiService.ResApiSucces(createBoard, "Create success!", 201, res);
+        return ResApiService.ResApiSucces(createData, "Create success!", 201, res);
     } catch (error) {
         console.log(error);
         return ResApiService.ResApiServerError(res);

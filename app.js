@@ -20,6 +20,7 @@ const user = require("./router/user/index.js");
 const admin = require("./router/admin/index.js");
 const board = require("./router/board/index.js");
 const message = require('./router/message/index.js');
+const match = require('./router/match/index.js');
 
 require('./models/mongoose.js');
 const port = 8000
@@ -52,6 +53,7 @@ app.use("/admin", admin);
 app.use("/api/users", user);
 app.use("/boards", board);
 app.use("/messages", message);
+app.use("/matchs", match);
 
 
 

@@ -18,4 +18,4 @@ function win (x,y) {
     }
 }
 
-console.log(win(60, 250));
+console.log(win(10, -10));
