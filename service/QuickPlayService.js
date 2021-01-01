@@ -15,14 +15,23 @@ class QuickPlayService {
         console.log("hear")
         const getData = await QuickPlay.find({}).sort({'cup': -1});
         console.log(getData);
-        const user_1 = getData[0].iduser;
-        const user_2 = getData[1].iduser;
+        let user_1 = null, user_2 = null;
+        if (getData[0])
+            user_1 = getData[0].iduser;
+        if (getData[1])
+            user_2 = getData[1].iduser;
+        
         if (!user_1 || !user_2) return null;
+        
         const delete_1 = await QuickPlay.findOneAndDelete({iduser: user_1});
         const delete_2 = await QuickPlay.findOneAndDelete({iduser: user_2});
         if (!delete_1 || !delete_2) return null;
-
         return [ user_1, user_2 ];
+    }
+
+    async delete(deleteData) {
+        const result = await QuickPlay.findOneAndDelete({iduser: deleteData});
+        return result;
     }
 }
 

@@ -23,6 +23,9 @@ const schemaUser = new Schema ({
         type: String
         // dinh dang xxx@xxx.xxx
     },
+    join_date: {
+        type: Date
+    },
     cup: {
         type: Number
         // 
