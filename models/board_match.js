@@ -12,15 +12,18 @@ const schemaBoard_match = new Schema ({
         type: String
     },
     step: {
-        type: Array
+        type: Array,
+        default: []
         // Mảng { x , y , user: 1 || 2 }
     },
     win: {
-        type: String
+        type: String,
+        default: null
         // ObjectId
     },
     size: {
-        type: Number
+        type: Number,
+        default: 20
         // Number x Number
     }
 }) 

@@ -1,10 +1,13 @@
 const socketio = require('socket.io');
 const { io } = require('socket.io-client');
-
 const Online = require('./Online/index');
-const Chat = require('./Chat/index');
+const OnlineService = require('../service/OnlineService');
 const sessionStorage = require('node-sessionstorage');
-const Board = require("../controller/board");
+const Board = require("../service/BoardService");
+const Match = require('../service/MatchService');
+const BoardController = require("../controller/board");
+//const { default: axios } = require('../../caro-fe/src/utils/axios');
+const axios = require('axios');
 
 module.exports.listen = function (app) {
 
@@ -17,7 +20,8 @@ module.exports.listen = function (app) {
     io.on('connection', async function (user) {
         console.log(user.request._query['displayname'], 'connected');
         const dataUser = user.request._query;
-        await Online.online(user.request._query);
+        await OnlineService.online(user.request._query)
+        //await Online.online(user.request._query);
 
         // vô web lần đầu
         // if (!currentUserString) {
@@ -31,7 +35,8 @@ module.exports.listen = function (app) {
         //     let data = await Online.online({ iduser: "", displayname: "Khách" });
         //     user.emit('list-online', data);
         // } else {
-        let data = await Online.listOnline();
+        //let data = await Online.listOnline();
+        let data = await OnlineService.listOnline();
         
         io.emit('list-online', data);
         //}
@@ -47,20 +52,23 @@ module.exports.listen = function (app) {
         user.on('join-room', async function(data) {
             console.log("Join:" ,data);
 
-            // const join_instance = await Board.joinBoard(data);
-            // console.log("instance: ",join_instance)
-            // if (join_instance.message === "Room full!") {
-            //     console.log("Error join");
-            //     user.emit('error-join', join_instance);
-            //     return
-            // }
+            const board = await BoardController.join(data[0], data[1]);
 
-            console.log("Vẫn vào!");
+            if (board && board.id_user1 && board.id_user2) {
+                user.to(data[0]).emit('ready-start', board);
+            }
+
             user.join(data[0]);
+
+            user.on('start-game', async function () {
+                const [newMatch, board] = await Match.create(data[0]);
+                console.log(newMatch, board, 'aaaa');
+                user.to(data[0]).emit('new-match', [newMatch, board]);
+            });
 
             user.on("send-message", function (info_chat) {
                 console.log(info_chat.fromUsername + ": " + info_chat.content);
-                Chat.sendMessage(info_chat);
+                axios.post("http://localhost:8000/messages/send-message", {fromUsername: info_chat.fromUsername, fromDisplayName: info_chat.fromDisplayName, fromBoardId: info_chat.fromBoardId, content: info_chat.content});
                 user.to(data[0]).emit("update-area-chat", info_chat);
             })
 
@@ -76,7 +84,7 @@ module.exports.listen = function (app) {
             user.on('leave-room', function(){
                 console.log("Leave: ", data);
                 user.leave(data[0]);
-                Board.leaveBoard(data);
+                BoardController.leaveBoard(data);
             })
         })
 
@@ -89,6 +97,19 @@ module.exports.listen = function (app) {
             io.emit('list-online', dataOfline);
         })
 
+        user.on('invite-user-clicked-quick-play', async function (data) {
+            console.log("User " + data[0] + " invite user " + data[1]);
+            const api = await axios.get("http://localhost:8000/boards/iduser1/" + data[0]);
+
+            if (api.data.data) {
+                io.emit('join-room-quick-play', [data[1], api.data.data.code]);
+            }
+        })
+
+        user.on('invite-user', async function (data) {
+            console.log("User " + data[0] + " invite user " + data[1] + "join board " + data[2]);
+            io.emit('send-invitation', [data[0], data[1], data[2]]);
+        })
     })
 
     return io;

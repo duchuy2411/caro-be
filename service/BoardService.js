@@ -20,13 +20,19 @@ class BoardService {
         return result;
     }
 
+    async getBoardByIdUser1(id_user1) {
+        const result = await Board.findOne({id_user1: id_user1});
+        if (!result) return null;
+        return result;
+    }
+
     async create(createData) {
         // Validate
         const { title, description, id_user1 } = createData;
 
-        if (createData.password)
-        if (createData.password.length < 6 && createData.password.length > 20) return null;
-        if (createData.title.length > 50 && createData.title.length < 5) return null;
+        // if (createData.password)
+        // if (createData.password.length < 6 && createData.password.length > 20) return null;
+        // if (createData.title.length > 50 && createData.title.length < 5) return null;
 
         if (createData['id_user1']) {
             const exist_board = await Board.find({id_user1: createData['id_user1'], state: {$ne: -1}});
@@ -44,6 +50,8 @@ class BoardService {
             code,
             title,
             description,
+            password: createData.password,
+            time: createData.time,
             id_user1: id_user1,
             id_user2: null,
             state: 0
@@ -78,14 +86,17 @@ class BoardService {
     }
 
     async join(boardid, user2) {
-    
-        const search_board = await Board.findOne({_id: boardid});
+        const new_board = await Board.findOne({code: boardid});
+        if (!new_board) return null;
 
-        if (search_board.id_user2 !== null ) return null;
+        if (new_board.id_user1 == user2) {
+            return new_board;
+        }
 
-        const update_board = await Board.findOneAndUpdate({_id: boardid}, {id_user2: user2}, {new: true});
+        const update_board = await Board.findOneAndUpdate({code: boardid}, {id_user2: user2});
+        if (!update_board) return null;
 
-        return update_board;
+        return (await Board.findOne({code: boardid}));
     }
 
     async leave(boardid, user) {

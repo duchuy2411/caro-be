@@ -27,6 +27,19 @@ const getBoardByCode = async (req,res) => {
     }
 }
 
+const getBoardByIdUser1 = async (req,res) => {
+    try {
+        const data = await BoardService.getBoardByIdUser1(req.params.iduser1);
+        if (!data) return ResApiService.ResApiNotFound(res);
+
+        return ResApiService.ResApiSucces(data, '', 200, res);
+    }
+    catch (error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
+    }
+}
+
 const createBoard = async(req, res) => {
     try {
         const createData = await BoardService.create(req.body);
@@ -125,6 +138,7 @@ module.exports = {
     joinBoard,
     leaveBoard,
     getBoardByCode,
+    getBoardByIdUser1,
     addHistory,
     getHistoryList
 }
