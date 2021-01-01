@@ -1,11 +1,19 @@
 const Match = require("../models/board_match");
 const User = require("../models/user");
+const Board = require('../models/board');
 
 class MatchService {
-    async create(saveData) {
-        const new_match = await Match.save({saveData});
-        if (!new_match) return null;
-        return new_match;
+    async create(codeBoard) {
+        const board = await Board.findOne({code: codeBoard});
+        if (!board) return null;
+
+        const new_match = new Match({
+            id_board: codeBoard,
+            id_user1: board.id_user1,
+            id_user2: board.id_user2
+        });
+        await new_match.save();
+        return [new_match, board];
     }
 
     async update(updateData) {

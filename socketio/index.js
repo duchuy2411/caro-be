@@ -4,7 +4,8 @@ const { io } = require('socket.io-client');
 const Online = require('./Online/index');
 const Chat = require('./Chat/index');
 const sessionStorage = require('node-sessionstorage');
-const Board = require("../controller/board");
+const Board = require("../service/BoardService");
+const Match = require('../service/MatchService');
 
 module.exports.listen = function (app) {
 
@@ -47,16 +48,19 @@ module.exports.listen = function (app) {
         user.on('join-room', async function(data) {
             console.log("Join:" ,data);
 
-            // const join_instance = await Board.joinBoard(data);
-            // console.log("instance: ",join_instance)
-            // if (join_instance.message === "Room full!") {
-            //     console.log("Error join");
-            //     user.emit('error-join', join_instance);
-            //     return
-            // }
+           const board = await Board.join(data[0], data[1]);
 
-            console.log("Vẫn vào!");
+            if (board && board.id_user1 && board.id_user2) {
+                user.to(data[0]).emit('ready-start', board);
+            }
+
             user.join(data[0]);
+
+            user.on('start-game', async function () {
+                const [newMatch, board] = await Match.create(data[0]);
+                console.log(newMatch, board, 'aaaa');
+                user.to(data[0]).emit('new-match', [newMatch, board]);
+            });
 
             user.on("send-message", function (info_chat) {
                 console.log(info_chat.fromUsername + ": " + info_chat.content);

@@ -18,6 +18,9 @@ const BoardSchema = new Schema({
     description: {
         type: String
     },
+    time: {
+        type: String
+    },
     size: {
         type: Number, // Number x Number
         default: 20
@@ -29,22 +32,23 @@ const BoardSchema = new Schema({
         type: String // ObjectId
     },
     state: {
-        type: Number // -1 đã xóa, 1 rãnh rỗi, 0 đang chơi
+        type: Number, // -1 đã xóa, 1 rãnh rỗi, 0 đang chơi,
+        default: 1
     },
 })
 
-BoardSchema.pre('save', function() {
-    let board = this;
-    if (!board.password) next();
-    bcrypt.genSaltSync(10);
-
-    bcrypt.hash(board.password, salt, function(err, hash) {
-        if (err) return next(err);
-
-        board.password = hash;
-        next();
-    })
-})
+// BoardSchema.pre('save', function() {
+//     let board = this;
+//     if (!board.password) next();
+//     bcrypt.genSaltSync(10);
+//
+//     bcrypt.hash(board.password, salt, function(err, hash) {
+//         if (err) return next(err);
+//
+//         board.password = hash;
+//         next();
+//     })
+// })
 
 const Board = mongoose.model('Board', BoardSchema);
 module.exports = Board;

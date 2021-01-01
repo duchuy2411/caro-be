@@ -32,7 +32,7 @@ const createBoard = async(req, res) => {
         const createData = await BoardService.create(req.body);
         if (!createData) return ResApiService.ResApiNotFound(res);
 
-        return ResApiService.ResApiSucces(createBoard, "Create success!", 201, res);
+        return ResApiService.ResApiSucces(createData, "Create success!", 201, res);
     } catch (error) {
         console.log(error);
         return ResApiService.ResApiServerError(res);
