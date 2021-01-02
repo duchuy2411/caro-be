@@ -25,21 +25,20 @@ class MatchService {
     }
 
     async update(updateData) {
-        const update_match = await Match.findOneAndUpdate({_id: updateData.id}, {...updateData}, {new: true});
+        const update_match = await Match.findOneAndUpdate({id_board: updateData.id_board}, {...updateData}, {new: true});
         if (!update_match) return null;
         return update_match;
     }
 
-    async win(id_winner, id_loser, [score_x, score_y], updateData) {
+    async win(id_winner, id_loser, updateData) {
 
-        const [win, lose] = this.get_cup(score_x, score_y);
-        score_x += win;
-        score_y += lose;
         const update_winner = await User.findOne({_id: id_winner});
         const update_loser = await User.findOne({_id: id_loser});
 
-        update_winner['cup'] = score_x;
-        update_loser['cup'] = score_y;
+        const [win, lose] = this.get_cup(update_winner.cup, update_loser.cup);
+        console.log(update_winner);
+        update_winner['cup'] += win;
+        update_loser['cup'] += lose;
 
         update_winner['total_match'] += 1;
         update_loser['total_match'] += 1;
@@ -49,13 +48,11 @@ class MatchService {
         update_loser['win_percent'] = update_loser['win_match']/update_loser['total_match'];
 
         let updateDataWinner = await User.findOneAndUpdate({_id: id_winner}, {...update_winner}, {new: true});
-        console.log(updateDataWinner)
         if (!updateDataWinner) return;
         let updateDataLoser = await User.findOneAndUpdate({_id: id_loser}, {...update_loser}, {new: true});
-        console.log(updateDataLoser)
         if (!updateDataLoser) return;
 
-        const data = await Match.findOneAndUpdate({_id: updateData.id}, {win: updateData.id_winner});
+        const data = await Match.findOneAndUpdate({id_board: updateData.id_board}, {win: updateData.id_winner}, {new: true});
         if (!data) return null;
 
         return data;

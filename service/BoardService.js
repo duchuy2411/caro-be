@@ -92,30 +92,29 @@ class BoardService {
         if (new_board.id_user1 == user2) {
             return new_board;
         }
-
-        const update_board = await Board.findOneAndUpdate({code: boardid}, {id_user2: user2});
+        const update_board = await Board.findOneAndUpdate({code: boardid}, {id_user2: user2}, {new: true});
         if (!update_board) return null;
 
-        return (await Board.findOne({code: boardid}));
+        return update_board;
     }
 
     async leave(boardid, user) {
-        const update_board = await Board.find({_id: boardid});
+        const update_board = await Board.find({code: boardid});
         if (!update_board || update_board[0].state === -1) return null;
 
         if (update_board[0].id_user1 === user) {
             // Update board delete
             if (update_board[0].id_user2 === null) {
-                const delete_board = await Board.findOneAndUpdate({_id: boardid}, {state: -1}, {new: true});
+                const delete_board = await Board.findOneAndUpdate({code: boardid}, {state: -1}, {new: true});
                 return delete_board;
             }
             // Host leave and user 2 become host
             const replace_user = update_board[0].id_user2;
-            const new_board = await Board.findOneAndUpdate({_id: boardid}, {id_user1: replace_user, id_user2: null}, {new: true})
+            const new_board = await Board.findOneAndUpdate({code: boardid}, {id_user1: replace_user, id_user2: null}, {new: true})
             return new_board;
         } else {
             // Case Normal
-            const new_board = await Board.findOneAndUpdate({_id: boardid}, {id_user2: null}, {new: true});
+            const new_board = await Board.findOneAndUpdate({code: boardid}, {id_user2: null}, {new: true});
             return new_board;
         }
     }

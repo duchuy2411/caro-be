@@ -5,7 +5,7 @@ const ResApiService = require("../../service/ResApiService");
 const create = async (req, res) => {
     try {
         const createData = req.body;
-        let data = await MatchService.create(createData);
+        let data = await MatchService.create(createData.codeBoard);
         if (!data) return ResApiService.ResApiNotFound(res);
 
         return ResApiService.ResApiSucces(data, "Create success!", 201, res);
@@ -31,8 +31,8 @@ const update = async (req, res) => {
 
 const update_win = async (req, res) => {
     try {
-        const { id_winner, id_loser, score } = req.body;
-        let data = await MatchService.win(id_winner, id_loser, score, req.body);
+        const { id_winner, id_loser } = req.body;
+        let data = await MatchService.win(id_winner, id_loser, req.body);
         if (!data) return ResApiService.ResApiNotFound(res);
 
         return ResApiService.ResApiSucces(data, "Update success!", 202, res);

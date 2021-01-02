@@ -41,7 +41,7 @@ const schemaUser = new Schema ({
     },
     win_percent: {
         type: Number,
-        default: 100
+        default: 1
     },
     block: {
         type: Number
