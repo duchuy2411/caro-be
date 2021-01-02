@@ -76,6 +76,12 @@ class MatchService {
             return [ Math.ceil(max), Math.ceil(min) ]
         }
     }
+    
+    async getMatchByIdUser(id_user) {
+        const list_match1 = await Match.find({id_user1: id_user});
+        const list_match2 = await Match.find({id_user2: id_user});
+        return list_match1.concat(list_match2);
+    }
 }
 
 module.exports = new MatchService();

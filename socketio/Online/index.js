@@ -8,6 +8,11 @@ const online = async (user) => {
 }
 
 const offline = (user) => {
+    Online.deleteMany({iduser: user}, function(err, docs) {
+        if(err) console.log(err) 
+        else return;
+    });
+    return;
     Online.findOneAndDelete({iduser: user}, function(err, docs) {
         if(err) console.log(err) 
         else return;

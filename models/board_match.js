@@ -11,6 +11,12 @@ const schemaBoard_match = new Schema ({
     id_user2: {
         type: String
     },
+    displayname_user1: {
+        type: String
+    },
+    displayname_user2: {
+        type: String
+    },
     step: {
         type: Array,
         default: []
@@ -25,6 +31,9 @@ const schemaBoard_match = new Schema ({
         type: Number,
         default: 20
         // Number x Number
+    },
+    createdAt: {
+        type: Date
     }
 }) 
 

@@ -26,6 +26,10 @@ const schemaUser = new Schema ({
     join_date: {
         type: Date
     },
+    avatar : {
+        data: Buffer,
+        contentType: String
+    },
     cup: {
         type: Number,
         default: 0

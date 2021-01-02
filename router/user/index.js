@@ -23,6 +23,8 @@ router.route("/id/:id")
 router.route("/logout/:iduser")
     .get(UserController.logout)
 
+router.route("/update-profile")
+    .post(UserController.updateProfile);
 
 // router.route("/login")
 //     .get(UserController.testau)

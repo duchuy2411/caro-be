@@ -30,6 +30,7 @@ router.route('/gethistory/:id')
 // router.route('/match/winner')
 //     .post(MatchController.update_win)
 
-
+router.route('/getmatch/:iduser')
+    .get(MatchController.get_match)
 
 module.exports = router;
