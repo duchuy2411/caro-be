@@ -4,6 +4,7 @@ const passportConfig = require('../../middlewares/passport');
 
 const UserController = require('../../controller/user/index')
 const sessionStorage = require('node-sessionstorage');
+const User = require("../../models/user");
 router.route("/")
     .get(UserController.getCurrentUser)
     .post(UserController.signup);
@@ -25,6 +26,18 @@ router.route("/logout/:iduser")
 
 router.route("/update-profile")
     .post(UserController.updateProfile);
+
+router.route("/forget-password")
+    .post(UserController.forgetPassword);
+
+router.route("/reset-password")
+    .post(UserController.resetPassword);
+
+router.route("/activate-account")
+    .post(UserController.activateAccount)
+
+router.route("/check-activate-account")
+    .post(UserController.checkActivateAccount)
 
 // router.route("/login")
 //     .get(UserController.testau)

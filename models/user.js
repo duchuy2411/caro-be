@@ -52,6 +52,9 @@ const schemaUser = new Schema ({
     },
     is_Delete: {
         type: Number
+    },
+    isActivated: {
+        type: Boolean
     }
 })
 

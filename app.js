@@ -17,12 +17,15 @@ const morgan = require('morgan')
 
 const cookieParser = require('cookie-parser');
 
+const passport = require('passport');
+
 //router
 const user = require("./router/user/index.js");
 const admin = require("./router/admin/index.js");
 const board = require("./router/board/index.js");
 const message = require('./router/message/index.js');
 const match = require('./router/match/index.js');
+const auth = require('./router/user/auth/index.js');
 
 require('./models/mongoose.js');
 
@@ -41,6 +44,8 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 
 const swaggerOption = {
     swaggerDefinition: {
@@ -61,6 +66,7 @@ app.use("/api/users", user);
 app.use("/boards", board);
 app.use("/messages", message);
 app.use("/matchs", match);
+app.use("/auth", auth);
 //
 app.get("/", (req,res) => {
     res.status(200).json({
