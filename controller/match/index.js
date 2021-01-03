@@ -42,8 +42,21 @@ const update_win = async (req, res) => {
     }
 }
 
+const get_match = async (req, res) => {
+    try {
+        const id_user = req.params.iduser;
+        let data = await MatchService.getMatchByIdUser(id_user);
+        if (!data) return ResApiService.ResApiNotFound(res);
+        return ResApiService.ResApiSucces(data, "Get match success!", 200, res);
+    } catch (error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
+    }
+}
+
 module.exports = {
     create,
     update,
-    update_win
+    update_win,
+    get_match
 }

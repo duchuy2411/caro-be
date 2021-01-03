@@ -11,11 +11,17 @@ const schemaBoard_match = new Schema ({
     id_user2: {
         type: String
     },
-    step: {
-        type: Array,
-        default: []
-        // Mảng { x , y , user: 1 || 2 }
+    displayname_user1: {
+        type: String
     },
+    displayname_user2: {
+        type: String
+    },
+    step: {
+        type : Array ,
+        "default" : []
+    }
+    ,
     win: {
         type: String,
         default: null
@@ -25,8 +31,13 @@ const schemaBoard_match = new Schema ({
         type: Number,
         default: 20
         // Number x Number
+    },
+    createdAt: {
+        type: Date
     }
 }) 
+
+schemaBoard_match.set("timestamps", true);
 
 const Board_match = mongoose.model('Board_match', schemaBoard_match);
 

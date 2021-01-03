@@ -1,8 +1,10 @@
 const Online = require('../models/online');
+const User = require('../models/user');
 
 class OnlineService {
     async online(user) {
-        const newOnline = new Online({iduser: user.iduser, displayname: user.displayname});
+        const currentUser = await User.findOne({_id: user.iduser});
+        const newOnline = new Online({iduser: user.iduser, displayname: user.displayname, avatar: currentUser.avatar});
         await newOnline.save();
     }
     async offline(user) {

@@ -15,19 +15,31 @@ class MatchService {
         const board = await Board.findOne({code: codeBoard});
         if (!board) return null;
 
+        const user1 = await User.findOne({_id: board.id_user1});
+        const user2 = await User.findOne({_id: board.id_user2});
+
         const new_match = new Match({
             id_board: codeBoard,
             id_user1: board.id_user1,
             id_user2: board.id_user2
         });
         await new_match.save();
-        return [new_match, board];
+        return [new_match, board, user1, user2];
     }
 
     async update(updateData) {
         const update_match = await Match.findOneAndUpdate({id_board: updateData.id_board}, {...updateData}, {new: true});
         if (!update_match) return null;
         return update_match;
+    }
+
+    async addStep([idMatch ,squares, msg]) {
+        const updateMatch = await Match.findOne({_id: idMatch});
+        console.log(updateMatch, msg);
+        if (!updateMatch) return null;
+        await Match.updateOne({_id: idMatch}, {
+            $push: {step: {squares, message: msg}}
+        });
     }
 
     async win(id_winner, id_loser, updateData) {
@@ -75,6 +87,12 @@ class MatchService {
             let max = 10 + diff*0.1 > 20 ? 20 : 10 + diff*0.1
             return [ Math.ceil(max), Math.ceil(min) ]
         }
+    }
+
+    async getMatchByIdUser(id_user) {
+        const list_match1 = await Match.find({id_user1: id_user});
+        const list_match2 = await Match.find({id_user2: id_user});
+        return list_match1.concat(list_match2);
     }
 }
 

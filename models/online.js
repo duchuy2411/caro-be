@@ -7,6 +7,10 @@ const schemaOnline = new Schema ({
     },
     displayname: {
         type: String
+    },
+    avatar : {
+        data: Buffer,
+        contentType: String
     }
 }) 
 

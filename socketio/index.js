@@ -1,5 +1,6 @@
 const socketio = require('socket.io');
 const { io } = require('socket.io-client');
+
 const Online = require('./Online/index');
 const OnlineService = require('../service/OnlineService');
 const sessionStorage = require('node-sessionstorage');
@@ -51,18 +52,18 @@ module.exports.listen = function (app) {
         user.on('join-room', async function(data) {
             console.log("Join:" ,data);
 
-            const board = await BoardController.join(data[0], data[1]);
+           const board = await Board.join(data[0], data[1]);
 
             if (board && board.id_user1 && board.id_user2) {
+                console.log('start game')
                 user.to(data[0]).emit('ready-start', board);
             }
 
             user.join(data[0]);
 
             user.on('start-game', async function () {
-                const [newMatch, board] = await Match.create(data[0]);
-                console.log(newMatch, board, 'aaaa');
-                user.to(data[0]).emit('new-match', [newMatch, board]);
+                const [newMatch, board, user1, user2] = await Match.create(data[0]);
+                io.in(data[0]).emit('new-match', [newMatch, board, user1, user2]);
             });
 
             user.on("send-message", function (info_chat) {
@@ -71,13 +72,14 @@ module.exports.listen = function (app) {
                 user.to(data[0]).emit("update-area-chat", info_chat);
             })
 
-            user.on('play-caro', function(info_game) {
-                console.log('emit play-caro')
-                user.to(data[0]).emit("receive", info_game);
+            user.on('play-caro', function([idMatch, squares, msg]) {
+                console.log('emit play-caro');
+                Match.addStep([idMatch, squares, msg]);
+                user.to(data[0]).emit("receive", [squares, msg]);
             })
 
-            user.on('win-game', function(info_game) {
-                user.to(data[0]).emit("win-game", info_game);
+            user.on('win-game', function([idMatch, winner,line, msg]) {
+                io.in(data[0]).emit("win-game", [line, msg]);
             })
 
             user.on('leave-room', function(){
