@@ -12,10 +12,10 @@ const schemaBoard_match = new Schema ({
         type: String
     },
     step: {
-        type: Array,
-        default: []
-        // Mảng { x , y , user: 1 || 2 }
-    },
+        type : Array ,
+        "default" : []
+    }
+    ,
     win: {
         type: String,
         default: null
@@ -27,6 +27,8 @@ const schemaBoard_match = new Schema ({
         // Number x Number
     }
 }) 
+
+schemaBoard_match.set("timestamps", true);
 
 const Board_match = mongoose.model('Board_match', schemaBoard_match);
 

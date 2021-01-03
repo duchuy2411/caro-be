@@ -7,19 +7,31 @@ class MatchService {
         const board = await Board.findOne({code: codeBoard});
         if (!board) return null;
 
+        const user1 = await User.findOne({_id: board.id_user1});
+        const user2 = await User.findOne({_id: board.id_user2});
+
         const new_match = new Match({
             id_board: codeBoard,
             id_user1: board.id_user1,
             id_user2: board.id_user2
         });
         await new_match.save();
-        return [new_match, board];
+        return [new_match, board, user1, user2];
     }
 
     async update(updateData) {
         const update_match = await Match.findOneAndUpdate({_id: saveData.id}, {updateData});
         if (!update_match) return null;
         return update_match;
+    }
+
+    async addStep([idMatch ,squares, msg]) {
+        const updateMatch = await Match.findOne({_id: idMatch});
+        console.log(updateMatch, msg);
+        if (!updateMatch) return null;
+        await Match.updateOne({_id: idMatch}, {
+            $push: {step: {squares, message: msg}}
+        });
     }
 
     async win(id_winner, id_loser, [score_x, score_y], updateData) {

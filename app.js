@@ -24,12 +24,6 @@ const message = require('./router/message/index.js');
 require('./models/mongoose.js');
 const port = 8000
 
-const range = function (req, res, next) {
-    res.header('Access-Control-Expose-Headers', 'X-Total-Count')
-    res.header('X-Total-Count','10');
-    next();
-}
-app.use(range);
 app.use(cors())
 app.use(express.json());
 app.use(morgan("dev"));

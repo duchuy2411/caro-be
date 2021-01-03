@@ -57,7 +57,7 @@ const login = async (req, res) => {
         //req.session.save();
         //currentUser = user;
         
-        return res.cookie('currentUsername', user.username, {maxAge: 3600000}).redirect('http://localhost:3000');
+        return res.cookie('currentUsername', user.username, {maxAge: 36000000}).redirect('http://localhost:3000');
         // return res.redirect('http://localhost:3000/play').json({
         //     error: 0,
         //     message: 'Login  success!',

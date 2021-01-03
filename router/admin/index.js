@@ -9,5 +9,10 @@ router.route("/users")
 router.route('/auth')
     .post(AdminController.login)
 
+router.route('/register')
+    .post(AdminController.register)
+
+router.route('/users/:id')
+    .get(AdminController.getUser)
 
 module.exports = router;

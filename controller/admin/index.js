@@ -40,15 +40,24 @@ const register = async (req, res) => {
 const getUsers = async (req, res) => {
     const users = await User.find({});
     const response = users.map((el, index) => {
-        return {...el.toObject(), id: index};
-    })
+        return {...el.toObject(), id: el._id};
+    });
+    res.header('Access-Control-Expose-Headers', 'X-Total-Count')
+    res.header('X-Total-Count', response.length);
     // console.log(response);
     return res.status(200).json(response);
+}
+
+const getUser = async (req, res) => {
+    console.log(req.params.id);
+    const user = await User.findOne({_id: req.params.id});
+    return res.status(200).json({...user.toObject(), id: user._id});
 }
 
 
 module.exports = {
     getUsers,
     login,
-    register
+    register,
+    getUser
 }
