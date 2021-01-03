@@ -4,7 +4,7 @@ var app = express();
 
 const http = require('http').createServer(app);
 const io = require('./socketio/index').listen(http);
-
+const session = require('express-session');
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv").config()
 
@@ -16,6 +16,13 @@ const cors = require('cors')
 const morgan = require('morgan')
 
 const cookieParser = require('cookie-parser');
+
+app.use(session({
+    resave: true, 
+    saveUninitialized: true, 
+    secret: 'somesecret', 
+    cookie: { maxAge: 60000 }
+}));
 
 //router
 const user = require("./router/user/index.js");
