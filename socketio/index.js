@@ -6,7 +6,7 @@ const OnlineService = require('../service/OnlineService');
 const sessionStorage = require('node-sessionstorage');
 const Board = require("../service/BoardService");
 const Match = require('../service/MatchService');
-// const Board = require("../controller/board");
+const BoardController = require("../controller/board");
 //const { default: axios } = require('../../caro-fe/src/utils/axios');
 const axios = require('axios');
 
@@ -86,7 +86,7 @@ module.exports.listen = function (app) {
             user.on('leave-room', function(){
                 console.log("Leave: ", data);
                 user.leave(data[0]);
-                Board.leaveBoard(data);
+                BoardController.leaveBoard(data);
             })
         })
 

@@ -12,9 +12,9 @@ class QuickPlayService {
     }
 
     async getAndDelete() {
-        console.log("hear")
         const getData = await QuickPlay.find({}).sort({'cup': -1});
-        console.log(getData);
+        if (getData.length < 2) return null;
+        
         let user_1 = null, user_2 = null;
         if (getData[0])
             user_1 = getData[0].iduser;

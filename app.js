@@ -8,6 +8,8 @@ const io = require('./socketio/index').listen(http);
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv").config()
 
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express')
 
 const cors = require('cors')
 
@@ -15,13 +17,18 @@ const morgan = require('morgan')
 
 const cookieParser = require('cookie-parser');
 
+const passport = require('passport');
+
 //router
 const user = require("./router/user/index.js");
 const admin = require("./router/admin/index.js");
 const board = require("./router/board/index.js");
 const message = require('./router/message/index.js');
+const match = require('./router/match/index.js');
+const auth = require('./router/user/auth/index.js');
 
 require('./models/mongoose.js');
+
 const port = 8000
 
 app.use(cors())
@@ -31,24 +38,30 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 
-// app.use(session({
-//     secret: "secret",
-//     resave: true,
-//     saveUninitialized: true
-// }));
-// app.use(passport.initialize());
-// app.use(passport.session());
+const swaggerOption = {
+    swaggerDefinition: {
+        info: {
+            title: "Caro API",
+            description: "DATABASE = 'mongodb+srv://dbcaro:Huykhung123.@cluster0.jtp3p.mongodb.net/db_dev_caro?retryWrites=true&w=majority'",
+            servers: ["http://localhost:8000"]
+        }
+    },
+    apis: ["./router/swagger_ui_doc.js"]
+}
 
-
+const swaggerDocs = swaggerJsDoc(swaggerOption);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/admin", admin);
 app.use("/api/users", user);
 app.use("/boards", board);
 app.use("/messages", message);
-
-
-
+app.use("/matchs", match);
+app.use("/auth", auth);
+//
 app.get("/", (req,res) => {
     res.status(200).json({
         message: "OK"

@@ -26,24 +26,35 @@ const schemaUser = new Schema ({
     join_date: {
         type: Date
     },
+    avatar : {
+        data: Buffer,
+        contentType: String
+    },
     cup: {
-        type: Number
-        // 
+        type: Number,
+        default: 0
+        //
     },
     total_match: {
-        type: Number
+        type: Number,
+        default: 0
     },
     win_match: {
-        type: Number
+        type: Number,
+        default: 0
     },
     win_percent: {
-        type: Number
+        type: Number,
+        default: 1
     },
     block: {
         type: Number
     },
     is_Delete: {
         type: Number
+    },
+    isActivated: {
+        type: Boolean
     }
 })
 

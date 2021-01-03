@@ -5,7 +5,7 @@ const ResApiService = require("../../service/ResApiService");
 const create = async (req, res) => {
     try {
         const createData = req.body;
-        let data = await MatchService.create(createData);
+        let data = await MatchService.create(createData.codeBoard);
         if (!data) return ResApiService.ResApiNotFound(res);
 
         return ResApiService.ResApiSucces(data, "Create success!", 201, res);
@@ -31,8 +31,8 @@ const update = async (req, res) => {
 
 const update_win = async (req, res) => {
     try {
-        const { id_winner, id_loser, score } = req.body;
-        let data = await MatchService.win(id_winner, id_loser, score, req.body);
+        const { id_winner, id_loser } = req.body;
+        let data = await MatchService.win(id_winner, id_loser, req.body);
         if (!data) return ResApiService.ResApiNotFound(res);
 
         return ResApiService.ResApiSucces(data, "Update success!", 202, res);
@@ -42,8 +42,21 @@ const update_win = async (req, res) => {
     }
 }
 
+const get_match = async (req, res) => {
+    try {
+        const id_user = req.params.iduser;
+        let data = await MatchService.getMatchByIdUser(id_user);
+        if (!data) return ResApiService.ResApiNotFound(res);
+        return ResApiService.ResApiSucces(data, "Get match success!", 200, res);
+    } catch (error) {
+        console.log(error);
+        return ResApiService.ResApiServerError(res);
+    }
+}
+
 module.exports = {
     create,
     update,
-    update_win
+    update_win,
+    get_match
 }

@@ -24,12 +24,13 @@ router.route('/addhistory/:id')
     .post(BoardController.addHistory)
 router.route('/gethistory/:id')
     .get(BoardController.getHistoryList)
-router.route('/:id/match/:match_id')
-    .post(MatchController.create)
-    .put(MatchController.update)
-router.route(':id/match/:match_id/winner')
-    .post(MatchController.update_win)
+// router.route('/match')
+//     .post(MatchController.create)
+//     .put(MatchController.update)
+// router.route('/match/winner')
+//     .post(MatchController.update_win)
 
-
+router.route('/getmatch/:iduser')
+    .get(MatchController.get_match)
 
 module.exports = router;

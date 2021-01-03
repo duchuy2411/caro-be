@@ -3,6 +3,14 @@ const User = require("../models/user");
 const Board = require('../models/board');
 
 class MatchService {
+
+    // async create(saveData) {
+    //     const data = new Match({...saveData});
+    //     const new_match = await data.save();
+    //     if (!new_match) return null;
+    //     return new_match;
+    // }
+
     async create(codeBoard) {
         const board = await Board.findOne({code: codeBoard});
         if (!board) return null;
@@ -20,7 +28,7 @@ class MatchService {
     }
 
     async update(updateData) {
-        const update_match = await Match.findOneAndUpdate({_id: saveData.id}, {updateData});
+        const update_match = await Match.findOneAndUpdate({id_board: updateData.id_board}, {...updateData}, {new: true});
         if (!update_match) return null;
         return update_match;
     }
@@ -36,13 +44,13 @@ class MatchService {
 
     async win(id_winner, id_loser, [score_x, score_y], updateData) {
 
-        const [win, lose] = this.get_cup(score_x, score_y);
-        score_x += win;
-        score_y += lose;
         const update_winner = await User.findOne({_id: id_winner});
         const update_loser = await User.findOne({_id: id_loser});
-        update_winner['cup'] = score_x;
-        update_loser['cup'] = score_y;
+
+        const [win, lose] = this.get_cup(update_winner.cup, update_loser.cup);
+        console.log(update_winner);
+        update_winner['cup'] += win;
+        update_loser['cup'] += lose;
 
         update_winner['total_match'] += 1;
         update_loser['total_match'] += 1;
@@ -51,12 +59,12 @@ class MatchService {
         update_winner['win_percent'] = update_winner['win_match']/update_winner['total_match'];
         update_loser['win_percent'] = update_loser['win_match']/update_loser['total_match'];
 
-        let updateDataWinner = await update_winner.update({update_winner});
+        let updateDataWinner = await User.findOneAndUpdate({_id: id_winner}, {...update_winner}, {new: true});
         if (!updateDataWinner) return;
-        let updateDataLoser = await update_loser.update({update_loser});
+        let updateDataLoser = await User.findOneAndUpdate({_id: id_loser}, {...update_loser}, {new: true});
         if (!updateDataLoser) return;
 
-        const data = await Match.findOneAndUpdate({_id: id}, {updateData});
+        const data = await Match.findOneAndUpdate({id_board: updateData.id_board}, {win: updateData.id_winner}, {new: true});
         if (!data) return null;
 
         return data;
@@ -77,8 +85,14 @@ class MatchService {
         } else {
             let min = -10 - diff*0.2 < -25 ? -25 : - 10 - diff*0.2;
             let max = 10 + diff*0.1 > 20 ? 20 : 10 + diff*0.1
-            return [ max, min ]
+            return [ Math.ceil(max), Math.ceil(min) ]
         }
+    }
+
+    async getMatchByIdUser(id_user) {
+        const list_match1 = await Match.find({id_user1: id_user});
+        const list_match2 = await Match.find({id_user2: id_user});
+        return list_match1.concat(list_match2);
     }
 }
 

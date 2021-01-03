@@ -3,12 +3,18 @@ const Schema = mongoose.Schema;
 
 const schemaBoard_match = new Schema ({
     id_board: {
-        type: String
+        type: Number
     },
     id_user1: {
         type: String
     },
     id_user2: {
+        type: String
+    },
+    displayname_user1: {
+        type: String
+    },
+    displayname_user2: {
         type: String
     },
     step: {
@@ -25,6 +31,9 @@ const schemaBoard_match = new Schema ({
         type: Number,
         default: 20
         // Number x Number
+    },
+    createdAt: {
+        type: Date
     }
 }) 
 
