@@ -39,7 +39,7 @@ module.exports.listen = function (app) {
         //let data = await Online.listOnline();
         let data = await OnlineService.listOnline();
         
-        io.emit('list-online', data);
+        user.emit('list-online', data);
         //}
         // user.on('login', async function() {
         //     console.log(dataUser['displayname'], "disconnected!");
@@ -55,12 +55,12 @@ module.exports.listen = function (app) {
 
            const board = await Board.join(data[0], data[1]);
 
-            if (board && board.id_user1 && board.id_user2) {
-                console.log('start game')
+            if (board && board.id_user1 && (board.id_user2 !== "" || !board.id_user2)) {
+                console.log('start game', board);
                 user.to(data[0]).emit('ready-start', board);
             }
 
-            user.join(data[0]);
+            await user.join(data[0]);
 
             user.on('start-game', async function () {
                 const [newMatch, board, user1, user2] = await Match.create(data[0]);
@@ -79,7 +79,8 @@ module.exports.listen = function (app) {
                 user.to(data[0]).emit("receive", [squares, msg]);
             })
 
-            user.on('win-game', function([idMatch, winner,line, msg]) {
+            user.on('win-game', function([idMatch, winner, loser, line, msg]) {
+                Match.win(idMatch, winner, loser);
                 io.in(data[0]).emit("win-game", [line, msg]);
             })
 

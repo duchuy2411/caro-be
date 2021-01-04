@@ -35,20 +35,18 @@ class MatchService {
 
     async addStep([idMatch ,squares, msg]) {
         const updateMatch = await Match.findOne({_id: idMatch});
-        console.log(updateMatch, msg);
         if (!updateMatch) return null;
         await Match.updateOne({_id: idMatch}, {
             $push: {step: {squares, message: msg}}
         });
     }
 
-    async win(id_winner, id_loser, [score_x, score_y], updateData) {
+    async win(idMatch ,id_winner, id_loser) {
 
         const update_winner = await User.findOne({_id: id_winner});
         const update_loser = await User.findOne({_id: id_loser});
 
         const [win, lose] = this.get_cup(update_winner.cup, update_loser.cup);
-        console.log(update_winner);
         update_winner['cup'] += win;
         update_loser['cup'] += lose;
 
@@ -64,7 +62,7 @@ class MatchService {
         let updateDataLoser = await User.findOneAndUpdate({_id: id_loser}, {...update_loser}, {new: true});
         if (!updateDataLoser) return;
 
-        const data = await Match.findOneAndUpdate({id_board: updateData.id_board}, {win: updateData.id_winner}, {new: true});
+        const data = await Match.findOneAndUpdate({_id: idMatch}, {win: id_winner}, {new: true});
         if (!data) return null;
 
         return data;
