@@ -2,7 +2,8 @@ const User = require('../../models/user');
 const Online = require('../../models/online');
 const Admin = require('../../models/admin');
 const Match = require('../../models/board_match');
-const Board = require('../../models/board')
+const Board = require('../../models/board');
+const Message = require('../../models/message');
 const JWT = require("jsonwebtoken");
 
 const encodedToken = (id) => {
@@ -43,6 +44,7 @@ const getUsers = async (req, res) => {
     if (!req.query.q) {
         req.query.q = '.';
     }
+    const total = await User.find({}).select('_id');
     const users = await User.find({$or: [
             {
                 displayname: {'$regex' : req.query.q, '$options' : 'i'}
@@ -50,12 +52,12 @@ const getUsers = async (req, res) => {
             {
                 email: {'$regex' : req.query.q, '$options' : 'i'}
             }
-        ]});
+        ]}).skip(parseInt(req.query._start)).limit(10);
     const response = users.map((el, index) => {
         return {...el.toObject(), id: el._id};
     });
     res.header('Access-Control-Expose-Headers', 'X-Total-Count')
-    res.header('X-Total-Count', response.length);
+    res.header('X-Total-Count', total.length);
     return res.status(200).json(response);
 }
 
@@ -117,8 +119,15 @@ const getMatch = async (req, res) => {
     try {
         const match = await Match.findOne({_id: req.params.id});
         const board = await Board.findOne({_id: match.id_board});
-        return res.status(200).json({...match.toObject(), id: match._id, id_board: {...board.toObject()}});
+        const messages = await Message.find({fromBoardMatch: match._id});
+        return res.status(200).json({
+            ...match.toObject(),
+            id: match._id,
+            id_board: {...board.toObject()},
+            messages,
+            });
     } catch (err) {
+        console.log(err);
         return res.status(404).json({err})
     }
 }
