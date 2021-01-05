@@ -54,8 +54,8 @@ class MatchService {
         update_loser['total_match'] += 1;
         update_winner['win_match'] += 1;
 
-        update_winner['win_percent'] = update_winner['win_match']/update_winner['total_match'];
-        update_loser['win_percent'] = update_loser['win_match']/update_loser['total_match'];
+        update_winner['win_percent'] = this.round_2_digits((update_winner['win_match']/update_winner['total_match'])*100);
+        update_loser['win_percent'] = this.round_2_digits((update_loser['win_match']/update_loser['total_match'])*100);
 
         let updateDataWinner = await User.findOneAndUpdate({_id: id_winner}, {...update_winner}, {new: true});
         if (!updateDataWinner) return;
@@ -91,6 +91,10 @@ class MatchService {
         const list_match1 = await Match.find({id_user1: id_user});
         const list_match2 = await Match.find({id_user2: id_user});
         return list_match1.concat(list_match2);
+    }
+
+    round_2_digits(num) {
+        return Math.round(num * 100) / 100;
     }
 }
 

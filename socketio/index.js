@@ -3,10 +3,12 @@ const { io } = require('socket.io-client');
 
 const Online = require('./Online/index');
 const OnlineService = require('../service/OnlineService');
+const MessageService = require('../service/MessageService');
 const sessionStorage = require('node-sessionstorage');
 const Board = require("../service/BoardService");
 const Match = require('../service/MatchService');
 const BoardController = require("../controller/board");
+
 const axios = require('axios');
 
 module.exports.listen = function (app) {
@@ -68,7 +70,8 @@ module.exports.listen = function (app) {
 
             user.on("send-message", function (info_chat) {
                 console.log(info_chat.fromUsername + ": " + info_chat.content);
-                axios.post("http://localhost:8000/messages/send-message", {fromUsername: info_chat.fromUsername, fromDisplayName: info_chat.fromDisplayName, fromBoardId: info_chat.fromBoardId, content: info_chat.content});
+                MessageService.create(info_chat);
+                //axios.post("http://localhost:8000/messages/send-message", {fromUsername: info_chat.fromUsername, fromDisplayName: info_chat.fromDisplayName, fromBoardId: info_chat.fromBoardId, fromBoardMatch: info_chat.fromBoardMatch, content: info_chat.content});
                 user.to(data[0]).emit("update-area-chat", info_chat);
             })
 

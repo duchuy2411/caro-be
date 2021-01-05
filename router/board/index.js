@@ -1,7 +1,6 @@
 const router = require('express').Router();
 
 const BoardController = require('../../controller/board/index');
-const MatchController = require('../../controller/match/index');
 const ControllerTextSocket = require('../../controller/ControllerTextSocket');
 
 router.route('/')
@@ -30,7 +29,6 @@ router.route('/gethistory/:id')
 // router.route('/match/winner')
 //     .post(MatchController.update_win)
 
-router.route('/getmatch/:iduser')
-    .get(MatchController.get_match)
+
 
 module.exports = router;

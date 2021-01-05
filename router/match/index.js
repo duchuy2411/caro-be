@@ -7,6 +7,9 @@ router.route('/')
     // .get(MatchController.get)
     .post(MatchController.create)
 
+router.route('/iduser/:iduser')
+    .get(MatchController.get_match)
+
 router.route('/update')
     .post(MatchController.update)
 

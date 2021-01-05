@@ -11,6 +11,10 @@ class MessageService {
         const chatContentList = await Message.find({fromBoardId: boardId});
         return chatContentList;
     }
+    async getMessageFromBoardMatch(boardMatch) {
+        const chatContentList = await Message.find({fromBoardMatch: boardMatch});
+        return chatContentList;
+    }
 }
 
 module.exports = new MessageService();

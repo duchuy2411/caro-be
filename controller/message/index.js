@@ -8,6 +8,12 @@ const getMessageFromBoardId = async(req,res) => {
     return ResApiService.ResApiSucces(messages, "", 200, res);
 }
 
+const getMessageFromBoardMatch = async(req,res) => {
+    console.log(req.params.fromBoardMatch);
+    const messages = await MessageService.getMessageFromBoardMatch(req.params.fromBoardMatch);
+    return ResApiService.ResApiSucces(messages, "", 200, res);
+}
+
 const create = async (req, res) => {
     try {
         const createData = req.body;
@@ -22,5 +28,6 @@ const create = async (req, res) => {
 
 module.exports = {
     getMessageFromBoardId,
+    getMessageFromBoardMatch,
     create
 }
