@@ -79,9 +79,10 @@ const login = async (req, res) => {
 const signup = async (req, res, next) => {
     try {
         let { displayname, username, password, email } = req.body;
-        let existUser = await User.findOne({ username: username });
+        let existUser = await User.findOne({$or: [ { username: username }, {email: email}]});
         if (existUser)
-            return ResApiService.ResApiSucces(null, 'Username already exists', 200, res);
+            return ResApiService.ResApiSucces(null, 'Username or email already exists', 200, res);
+        
 
         let user = new User({
             displayname: displayname,
@@ -153,14 +154,12 @@ const logout = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-        let { iduser, newPassword, newDisplayName, fileName, oldPassword } = req.body;
+        let { iduser, newPassword, newDisplayName, fileName } = req.body;
         let user = await User.findOne({ _id: iduser });
         if (!user)
             return ResApiService.ResApiNotFound(res);
         if (newPassword)
             user.password = newPassword;
-        else
-            user.password = oldPassword;
         user.displayname = newDisplayName;
         if (fileName) {
             user.avatar.data = fs.readFileSync(fileName);
