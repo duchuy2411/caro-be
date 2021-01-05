@@ -19,7 +19,7 @@ class MatchService {
         const user2 = await User.findOne({_id: board.id_user2});
 
         const new_match = new Match({
-            id_board: codeBoard,
+            id_board: board._id,
             id_user1: board.id_user1,
             id_user2: board.id_user2
         });

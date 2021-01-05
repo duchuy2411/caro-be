@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const schemaBoard_match = new Schema ({
     id_board: {
-        type: Number
+        type: String
     },
     id_user1: {
         type: String
