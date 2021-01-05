@@ -54,7 +54,7 @@ class BoardService {
             time: createData.time,
             id_user1: id_user1,
             id_user2: null,
-            state: 0
+            state: 1
         })
     
         let new_board = await board.save();
