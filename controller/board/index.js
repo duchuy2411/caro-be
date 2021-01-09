@@ -109,7 +109,10 @@ const joinBoard = async (req, res) => {
 
 const leaveBoard = async (req, res) => {
     try {
-        const {boardid, user} = req.body;
+        const boardid = req.body.boardid;
+        const user = req.body.user;
+        console.log(boardid);
+        //const {boardid, user} = req.body;
         const data = await BoardService.leave(boardid, user);
         if (!data) return ResApiService.ResApiNotFound(res);
 
