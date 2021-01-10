@@ -22,10 +22,14 @@ const schemaBoard_match = new Schema ({
         "default" : []
     }
     ,
-    win: {
+    id_win: {
         type: String,
         default: null
         // ObjectId
+    },
+    displayname_win: {
+        type: String,
+        default: null
     },
     size: {
         type: Number,
