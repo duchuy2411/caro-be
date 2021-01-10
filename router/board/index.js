@@ -3,26 +3,38 @@ const router = require('express').Router();
 const BoardController = require('../../controller/board/index');
 const ControllerTextSocket = require('../../controller/ControllerTextSocket');
 
+const passport = require('passport')
+const passportConfig = require('../../middlewares/passport');
+
 router.route('/')
-    .get(BoardController.getAll)
-    .post(BoardController.createBoard)
+    .get(passport.authenticate('jwt', {session: false}), BoardController.getAll)
+    .post(passport.authenticate('jwt', {session: false}), BoardController.createBoard)
+
 router.route('/quickplay')
-    .get(ControllerTextSocket.getDelete)
-    .post(ControllerTextSocket.createQuickPlay)
+    .get(passport.authenticate('jwt', {session: false}), ControllerTextSocket.getDelete)
+    .post(passport.authenticate('jwt', {session: false}), ControllerTextSocket.createQuickPlay)
+
 router.route('/deleteQuickPlay')
-    .post(ControllerTextSocket.deleteQuickPlay)
+    .post(passport.authenticate('jwt', {session: false}), ControllerTextSocket.deleteQuickPlay)
+
 router.route('/join')
-    .post(BoardController.joinBoard)
+    .post(passport.authenticate('jwt', {session: false}), BoardController.joinBoard)
+
 router.route('/leave')
-    .post(BoardController.leaveBoard)
+    .post(passport.authenticate('jwt', {session: false}), BoardController.leaveBoard)
+
 router.route('/:id')
-    .get(BoardController.getBoardByCode)
+    .get(passport.authenticate('jwt', {session: false}), BoardController.getBoardByCode)
+
 router.route('/iduser1/:iduser1')
-    .get(BoardController.getBoardByIdUser1)
+    .get(passport.authenticate('jwt', {session: false}), BoardController.getBoardByIdUser1)
+
 router.route('/addhistory/:id')
-    .post(BoardController.addHistory)
+    .post(passport.authenticate('jwt', {session: false}), BoardController.addHistory)
+
 router.route('/gethistory/:id')
-    .get(BoardController.getHistoryList)
+    .get(passport.authenticate('jwt', {session: false}), BoardController.getHistoryList)
+
 // router.route('/match')
 //     .post(MatchController.create)
 //     .put(MatchController.update)

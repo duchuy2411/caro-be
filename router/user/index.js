@@ -5,27 +5,28 @@ const passportConfig = require('../../middlewares/passport');
 const UserController = require('../../controller/user/index')
 const sessionStorage = require('node-sessionstorage');
 const User = require("../../models/user");
+
 router.route("/")
-    .get(UserController.getCurrentUser)
+    .get(passport.authenticate('jwt', {session: false}), UserController.getCurrentUser)
     .post(UserController.signup);
 
 router.route("/login")
     .post(passport.authenticate('local', {session: false}), UserController.login)
 
 router.route("/all")
-    .get(UserController.index);
+    .get(passport.authenticate('jwt', {session: false}), UserController.index);
 
 router.route("/:username")
-    .get(UserController.getCurrentUser)
+    .get(passport.authenticate('jwt', {session: false}), UserController.getCurrentUser);
 
 router.route("/id/:id")
-    .get(UserController.getUserById);
+    .get(passport.authenticate('jwt', {session: false}), UserController.getUserById);
 
 router.route("/logout/:iduser")
-    .get(UserController.logout)
+    .get(passport.authenticate('jwt', {session: false}), UserController.logout)
 
 router.route("/update-profile")
-    .post(UserController.updateProfile);
+    .post(passport.authenticate('jwt', {session: false}), UserController.updateProfile);
 
 router.route("/forget-password")
     .post(UserController.forgetPassword);
@@ -34,10 +35,10 @@ router.route("/reset-password")
     .post(UserController.resetPassword);
 
 router.route("/activate-account")
-    .post(UserController.activateAccount)
+    .post(UserController.activateAccount);
 
 router.route("/check-activate-account")
-    .post(UserController.checkActivateAccount)
+    .post(UserController.checkActivateAccount);
 
 // router.route("/login")
 //     .get(UserController.testau)

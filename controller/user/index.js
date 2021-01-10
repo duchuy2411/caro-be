@@ -16,7 +16,7 @@ const encodedToken = (id) => {
         sub: id,
         iat: new Date().getTime(),
         exp: new Date().setDate(new Date().getDate() + 3)
-    }, process.env.JWT_SECRET ? process.env.JWT : 'webnangcao')
+    }, 'webnangcao')
 };
 
 const index = async (req, res) => {
@@ -38,8 +38,13 @@ const login = async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
+    if (user.block === 1) return res.status(403).json({
+        error: 1,
+        message: "Forbidden"
+    })
+
     if (user) {
-        res.setHeader('Authorization', token);
+        res.setHeader('Authorization', "Bearer " + token);
 
         //xóa tk khách trong ds online sau khi đăng nhập
         // Online.findOneAndDelete({iduser: JSON.parse(sessionStorage.getItem('currentuser'))._id}, function(err, docs) {
