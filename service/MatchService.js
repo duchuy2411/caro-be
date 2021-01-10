@@ -21,7 +21,9 @@ class MatchService {
         const new_match = new Match({
             id_board: board._id,
             id_user1: board.id_user1,
-            id_user2: board.id_user2
+            id_user2: board.id_user2,
+            displayname_user1: user1.displayname,
+            displayname_user2: user2.displayname,
         });
         await new_match.save();
         return [new_match, board, user1, user2];
