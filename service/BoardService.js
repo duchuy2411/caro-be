@@ -21,7 +21,7 @@ class BoardService {
     }
 
     async getBoardByIdUser1(id_user1) {
-        const result = await Board.findOne({id_user1: id_user1});
+        const result = await Board.findOne({id_user1: id_user1, state: {$ne: -1}});
         if (!result) return null;
         return result;
     }
@@ -89,7 +89,7 @@ class BoardService {
         const new_board = await Board.findOne({code: boardid});
         if (!new_board) return null;
 
-        if (new_board.id_user1 == user2) {
+        if (new_board.id_user1 == user2 || (new_board.id_user2)) {
             return new_board;
         }
         const update_board = await Board.findOneAndUpdate({code: boardid}, {id_user2: user2}, {new: true});

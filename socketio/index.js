@@ -54,9 +54,9 @@ module.exports.listen = function (app) {
         user.on('join-room', async function(data) {
             console.log("Join:" ,data);
 
-           const board = await Board.join(data[0], data[1]);
+            let board = await Board.join(data[0], data[1]);
 
-            if (board && board.id_user1 && (board.id_user2 !== "" || !board.id_user2)) {
+            if (board && board.id_user1 && (board.id_user2 !== "" || !board.id_user2) && board.state === 1) {
                 console.log('start game', board);
                 user.to(data[0]).emit('ready-start', board);
             }
@@ -64,7 +64,8 @@ module.exports.listen = function (app) {
             await user.join(data[0]);
 
             user.on('start-game', async function () {
-                const [newMatch, board, user1, user2] = await Match.create(data[0]);
+                const [newMatch, board, user1, user2] = await Match.create(data[0]); // đã set state = 0 trong db
+                board.state = 0;
                 io.in(data[0]).emit('new-match', [newMatch, board, user1, user2]);
             });
 
@@ -82,14 +83,19 @@ module.exports.listen = function (app) {
             })
 
             user.on('win-game', function([idMatch, winner, loser, line, msg]) {
-                Match.win(idMatch, winner, loser);
+                Match.win(idMatch, winner, loser, data[0]); // đã set state = 0 trong db
+                board.state = 1;
                 io.in(data[0]).emit("win-game", [line, msg]);
             })
 
-            user.on('leave-room', function(){
+            user.on('leave-room', async function(){
                 console.log("Leave: ", data);
                 user.leave(data[0]);
-                BoardController.leaveBoard(data);
+                if (data[1] === board.id_user1 || data[1] === board.id_user2) {
+                    board = await Board.leave(data[0], data[1]);
+                    user.to(data[0]).emit('update-ui-leave-room', board);
+                }
+                io.emit('update-table', board);
             })
         })
 
@@ -104,10 +110,11 @@ module.exports.listen = function (app) {
 
         user.on('invite-user-clicked-quick-play', async function (data) {
             console.log("User " + data[0] + " invite user " + data[1]);
-            const api = await axios.get("http://localhost:8000/boards/iduser1/" + data[0]);
+            const _board = await Board.getBoardByIdUser1(data[0]);
+            //const api = await axios.get("http://localhost:8000/boards/iduser1/" + data[0]);
 
-            if (api.data.data) {
-                io.emit('join-room-quick-play', [data[1], api.data.data.code]);
+            if (_board) {
+                io.emit('join-room-quick-play', [data[1], _board.code]);
             }
         })
 
@@ -115,6 +122,12 @@ module.exports.listen = function (app) {
             console.log("User " + data[0] + " invite user " + data[1] + "join board " + data[2]);
             io.emit('send-invitation', [data[0], data[1], data[2]]);
         })
+
+        user.on('create-table', async function(data) {
+            console.log("Create: ", data[0]);
+            io.emit('add-new-table', data[0]);
+        })
+
     })
 
     return io;

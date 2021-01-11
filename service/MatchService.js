@@ -12,7 +12,7 @@ class MatchService {
     // }
 
     async create(codeBoard) {
-        const board = await Board.findOne({code: codeBoard});
+        const board = await Board.findOneAndUpdate({code: codeBoard}, {state: 0}, {new: true});
         if (!board) return null;
 
         const user1 = await User.findOne({_id: board.id_user1});
@@ -21,7 +21,9 @@ class MatchService {
         const new_match = new Match({
             id_board: board._id,
             id_user1: board.id_user1,
-            id_user2: board.id_user2
+            id_user2: board.id_user2,
+            displayname_user1: user1.displayname,
+            displayname_user2: user2.displayname
         });
         await new_match.save();
         return [new_match, board, user1, user2];
@@ -41,7 +43,8 @@ class MatchService {
         });
     }
 
-    async win(idMatch ,id_winner, id_loser) {
+    async win(idMatch ,id_winner, id_loser, codeBoard) {
+        const board = await Board.findOneAndUpdate({code: codeBoard}, {state: 1}, {new: true});
 
         const update_winner = await User.findOne({_id: id_winner});
         const update_loser = await User.findOne({_id: id_loser});
@@ -62,7 +65,7 @@ class MatchService {
         let updateDataLoser = await User.findOneAndUpdate({_id: id_loser}, {...update_loser}, {new: true});
         if (!updateDataLoser) return;
 
-        const data = await Match.findOneAndUpdate({_id: idMatch}, {win: id_winner}, {new: true});
+        const data = await Match.findOneAndUpdate({_id: idMatch}, {id_win: id_winner, displayname_win: update_winner.displayname}, {new: true});
         if (!data) return null;
 
         return data;
