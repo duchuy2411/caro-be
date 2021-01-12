@@ -95,6 +95,7 @@ module.exports.listen = function (app) {
                     board = await Board.leave(data[0], data[1]);
                     user.to(data[0]).emit('update-ui-leave-room', board);
                 }
+                io.emit('update-table', board);
             })
         })
 
@@ -121,6 +122,12 @@ module.exports.listen = function (app) {
             console.log("User " + data[0] + " invite user " + data[1] + "join board " + data[2]);
             io.emit('send-invitation', [data[0], data[1], data[2]]);
         })
+
+        user.on('create-table', async function(data) {
+            console.log("Create: ", data[0]);
+            io.emit('add-new-table', data[0]);
+        })
+
     })
 
     return io;
