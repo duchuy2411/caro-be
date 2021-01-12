@@ -40,8 +40,10 @@ const login = async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
+    if (user.block === 1) return res.redirect(domain + '/sign-in');
+
     if (user) {
-        res.setHeader('Authorization', token);
+        res.setHeader('Authorization', "Bearer " + token);
 
         //xóa tk khách trong ds online sau khi đăng nhập
         // Online.findOneAndDelete({iduser: JSON.parse(sessionStorage.getItem('currentuser'))._id}, function(err, docs) {
