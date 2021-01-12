@@ -67,6 +67,7 @@ module.exports.listen = function (app) {
                 const [newMatch, board, user1, user2] = await Match.create(data[0]); // đã set state = 0 trong db
                 board.state = 0;
                 io.in(data[0]).emit('new-match', [newMatch, board, user1, user2]);
+                io.emit('update-table', board);
             });
 
             user.on("send-message", function (info_chat) {
@@ -86,6 +87,7 @@ module.exports.listen = function (app) {
                 Match.win(idMatch, winner, loser, data[0]); // đã set state = 0 trong db
                 board.state = 1;
                 io.in(data[0]).emit("win-game", [line, msg]);
+                io.emit('update-table', board);
             })
 
             user.on('leave-room', async function(){
@@ -124,8 +126,10 @@ module.exports.listen = function (app) {
         })
 
         user.on('create-table', async function(data) {
-            console.log("Create: ", data[0]);
-            io.emit('add-new-table', data[0]);
+            console.log("Created by user: ", data[0]);
+
+            const _board = await Board.getBoardByIdUser1(data[0]);
+            io.emit('add-new-table', _board);
         })
 
     })

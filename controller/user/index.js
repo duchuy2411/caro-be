@@ -10,6 +10,8 @@ const elasticemail = require('elasticemail');
 const UserService = require("../../service/UserService");
 const ResApiService = require("../../service/ResApiService");
 
+const { domain } = require("../../domain");
+
 const encodedToken = (id) => {
     return JWT.sign({
         iss: '',
@@ -63,7 +65,7 @@ const login = async (req, res) => {
 
         //return ResApiService.ResApiSucces(user, "Sign in success", 200, res);
 
-        return res.cookie('currentUsername', user.username, { maxAge: 3600000 }).redirect('http://localhost:3000');
+        return res.cookie('currentUsername', user.username, { maxAge: 3600000 }).redirect(domain);
         // return res.redirect('http://localhost:3000/play').json({
         //     error: 0,
         //     message: 'Login  success!',
@@ -72,7 +74,7 @@ const login = async (req, res) => {
     }
     else {
         //return ResApiService.ResApiNotFound(res);
-        return res.redirect('http://localhost:3000/sign-in');
+        return res.redirect(domain + '/sign-in');
     }
 }
 

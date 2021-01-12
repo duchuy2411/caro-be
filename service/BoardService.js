@@ -105,7 +105,7 @@ class BoardService {
         if (update_board[0].id_user1 === user) {
             // Update board delete
             if (update_board[0].id_user2 === null) {
-                const delete_board = await Board.findOneAndUpdate({code: boardid}, {state: -1}, {new: true});
+                const delete_board = await Board.findOneAndUpdate({code: boardid}, {state: -1, code: -1}, {new: true});
                 return delete_board;
             }
             // Host leave and user 2 become host

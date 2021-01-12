@@ -22,7 +22,7 @@ const schemaBoard_match = new Schema ({
         "default" : []
     }
     ,
-    id_win: {
+    win: {
         type: String,
         default: null
         // ObjectId
