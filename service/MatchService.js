@@ -65,7 +65,7 @@ class MatchService {
         let updateDataLoser = await User.findOneAndUpdate({_id: id_loser}, {...update_loser}, {new: true});
         if (!updateDataLoser) return;
 
-        const data = await Match.findOneAndUpdate({_id: idMatch}, {id_win: id_winner, displayname_win: update_winner.displayname}, {new: true});
+        const data = await Match.findOneAndUpdate({_id: idMatch}, {win: id_winner, displayname_win: update_winner.displayname}, {new: true});
         if (!data) return null;
 
         return data;

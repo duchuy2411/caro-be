@@ -92,7 +92,7 @@ class BoardService {
         if (new_board.id_user1 == user2 || (new_board.id_user2)) {
             return new_board;
         }
-        const update_board = await Board.findOneAndUpdate({code: boardid}, {id_user2: user2, state: 1}, {new: true});
+        const update_board = await Board.findOneAndUpdate({code: boardid}, {id_user2: user2}, {new: true});
         if (!update_board) return null;
 
         return update_board;
