@@ -7,7 +7,7 @@ const io = require('./socketio/index').listen(http);
 const session = require('express-session');
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv").config()
-
+const path = require('path');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express')
 
@@ -61,12 +61,16 @@ const swaggerOption = {
 const swaggerDocs = swaggerJsDoc(swaggerOption);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.use("/admin", admin);
-app.use("/api/users", user);
-app.use("/boards", board);
-app.use("/messages", message);
-app.use("/matchs", match);
-app.use("/auth", auth);
+app.use("/api/admin", admin);
+app.use("/api/api/users", user);
+app.use("/api/boards", board);
+app.use("/api/messages", message);
+app.use("/api/matchs", match);
+app.use("/api/auth", auth);
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, 'client/build')));
+}
 //
 app.get("/", (req,res) => {
     res.status(200).json({
@@ -88,6 +92,10 @@ app.use(function(err, req, res, next) {
         message: error.message
     })
 })
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname+'/client/build/index.html'));
+});
 
 http.listen(process.env.PORT ? process.env.PORT : port, () => {
     console.log("Server on!");
