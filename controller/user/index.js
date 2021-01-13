@@ -40,8 +40,8 @@ const login = async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
-    if (user.block === 1) return res.redirect(domain + '/sign-in');
-
+    //if (user.block === 1) return res.redirect(domain + '/sign-in');
+    if (user.block === 1) return ResApiService.ResApiSucces(user, "Account is blocked", 200, res);
     if (user) {
         res.setHeader('Authorization', "Bearer " + token);
 
@@ -65,9 +65,9 @@ const login = async (req, res) => {
         //currentUser = user;
         //res.cookie('currentUsername', user.username, {maxAge: 3600000});
 
-        //return ResApiService.ResApiSucces(user, "Sign in success", 200, res);
+        return ResApiService.ResApiSucces(user, "Sign in successfully", 200, res);
 
-        return res.cookie('currentUsername', user.username, { maxAge: 3600000 }).redirect(domain);
+        //return res.cookie('currentUsername', user.username, { maxAge: 3600000 }).redirect(domain);
         // return res.redirect('http://localhost:3000/play').json({
         //     error: 0,
         //     message: 'Login  success!',
@@ -75,8 +75,9 @@ const login = async (req, res) => {
         // });
     }
     else {
-        //return ResApiService.ResApiNotFound(res);
-        return res.redirect(domain + '/sign-in');
+        //return ResApiService.ResApiSucces(null, "Sign in unsuccessfully", 200, res);
+        return ResApiService.ResApiNotFound(res);
+        //return res.redirect(domain + '/sign-in');
     }
 }
 
