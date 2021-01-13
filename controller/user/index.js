@@ -40,8 +40,8 @@ const login = async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
-    if (user.block === 1) return res.redirect(domain + '/sign-in');
-
+    //if (user.block === 1) return res.redirect(domain + '/sign-in');
+    if (user.block === 1) return ResApiService.ResApiSucces(user, "Account is blocked", 200, res);
     if (user) {
         res.setHeader('Authorization', "Bearer " + token);
 
@@ -75,6 +75,7 @@ const login = async (req, res) => {
         // });
     }
     else {
+        //return ResApiService.ResApiSucces(null, "Sign in unsuccessfully", 200, res);
         return ResApiService.ResApiNotFound(res);
         //return res.redirect(domain + '/sign-in');
     }
